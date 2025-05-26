@@ -2,7 +2,7 @@
 
 ___
 ## Auteurs :
-* Louis AMEDRO (responsable) (Osiris Sio)
-* Jules HERBAUX (Lirei159)
-* Valentin MINNEBO (Jonedeuf)
-* Noa GAILLARD (???)
+* Louis AMEDRO, TPD (responsable) (Osiris Sio)
+* Jules HERBAUX, TPD (Lirei159)
+* Valentin MINNEBO, TPA (Jonedeuf)
+* Noa GAILLARD, TPC (???)
