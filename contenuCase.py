@@ -13,7 +13,7 @@ from PyQt6.QtCore import pyqtSignal
 # -----------------------------------------------------------------------------
 # --- class Partie_basse_droite
 # -----------------------------------------------------------------------------
-class Partie_basse_droite(QWidget):
+class ContenuCase(QWidget):
 
     signal_recherche_caractere = pyqtSignal(str)
 
@@ -31,3 +31,14 @@ class Partie_basse_droite(QWidget):
 
     def mise_a_jour_case(self, case):
         self.label_case.setText(f"Case : {case}")
+        
+# Programme principal : test de la vue ---------------------------------------
+if __name__ == "__main__":
+
+    print(f' --- main --- ')
+    app = QApplication(sys.argv)
+    
+    fenetre = ContenuCase()
+    fenetre.show()
+    
+    sys.exit(app.exec())

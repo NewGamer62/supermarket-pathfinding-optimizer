@@ -13,7 +13,7 @@ from PyQt6.QtCore import pyqtSignal
 # -----------------------------------------------------------------------------
 # --- class Partie_haute_droite
 # -----------------------------------------------------------------------------
-class Partie_haute_droite(QWidget):
+class Informations(QWidget):
 
     signal_recherche_caractere = pyqtSignal(str)
 
@@ -46,3 +46,14 @@ class Partie_haute_droite(QWidget):
         layout.addStretch()
 
         self.setLayout(layout)
+        
+# Programme principal : test de la vue ---------------------------------------
+if __name__ == "__main__":
+
+    print(f' --- main --- ')
+    app = QApplication(sys.argv)
+    
+    fenetre = Informations()
+    fenetre.show()
+    
+    sys.exit(app.exec())

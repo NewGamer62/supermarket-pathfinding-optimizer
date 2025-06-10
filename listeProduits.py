@@ -11,10 +11,10 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTextEdit,QLabel
 from PyQt6.QtCore import pyqtSignal
 
 # -----------------------------------------------------------------------------
-# --- class Partie Centre
+# --- class Partie gauche
 # -----------------------------------------------------------------------------
 
-class Partie_centre(QWidget):
+class ListeProduits(QWidget):
 
     signal_ouvrir = pyqtSignal()
     signal_enregistrer = pyqtSignal()
@@ -53,3 +53,14 @@ class Partie_centre(QWidget):
         self.editeur.blockSignals(True)
         self.editeur.setPlainText(texte)
         self.editeur.blockSignals(False)
+        
+# Programme principal : test de la vue ---------------------------------------
+if __name__ == "__main__":
+
+    print(f' --- main --- ')
+    app = QApplication(sys.argv)
+    
+    fenetre = ListeProduits()
+    fenetre.show()
+    
+    sys.exit(app.exec())
