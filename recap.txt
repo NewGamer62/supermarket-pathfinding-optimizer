@@ -1,0 +1,6 @@
+Mardi 10 Juin :
+
+- Louis : J'ai organiser le groupe (leader) et répartit certaines tâche sur Trello et créer certaines branches. J'ai réalisé la vue du plan pour le magasin (zoom, grille, ajustement,...)
+- Jules : Réalisation Logo d'équipe, de la charte graphique des vue (optionnelle) et le futur design des éléments des vues (plan_vue.png)
+- Noa : Aujourd'hui j'ai fait le figma pour avoir l'idée générale de l'application avec Jules (plan_vue.png). Ensuite j'ai commencé à faire l'application n°1 en commençant par la partie supérieure droite (informations) et j'ai ainsi découpé les vues pour faciliter le travail en équipe sur les vues (exemple, avec Louis)
+- Valentin : Je me suis chargé de la conception du modèle commun aux deux applications. J'ai d'abord réalisé un schéma représentant toutes les classes nécessaires à la réalisation du modèle ainsi que leurs attributs et leurs méthodes (dans plan_modele.pdf). Puis j'ai discuté avec mes camarades pour déterminer les éléments à laisser et à garder dans les modèles. Enfin, j'ai développé de A à Z la classe Informations qui fera partie du modèle final, et cela en comprenant les commentaires, docstrings et les tests unitaires.
