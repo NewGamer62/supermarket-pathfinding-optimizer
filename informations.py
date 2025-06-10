@@ -7,53 +7,129 @@
 #         MINNEBO Valentin (TPA)
 
 import sys
-from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTextEdit,QLabel, QPushButton, QLineEdit, QApplication)
-from PyQt6.QtCore import pyqtSignal
+from datetime import date
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtWidgets import (QApplication,QLabel,QHBoxLayout,QLineEdit,QPushButton,QVBoxLayout,QWidget)
 
-# -----------------------------------------------------------------------------
-# --- class Partie_haute_droite
-# -----------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# QLineEdit personnalisé : remet un texte par défaut si l’utilisateur
+#                         quitte la case en laissant le champ vide.
+# ---------------------------------------------------------------------------
+class QLineEditDefault(QLineEdit):
+    """QLineEdit qui restaure *default_text* sur perte de focus si vide."""
+
+    def __init__(self, default_text: str = "", parent: QWidget | None = None):
+        super().__init__(parent)
+        self._default_text = default_text
+
+    # ---------------------------------------------------------------------
+    # Événement : perte de focus
+    # ---------------------------------------------------------------------
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        if not self.text().strip():
+            self.setText(self._default_text)
+
+
+# ---------------------------------------------------------------------------
+# Vue Informations
+# ---------------------------------------------------------------------------
 class Informations(QWidget):
+    """Zone d’informations située en haut à droite de l’application."""
 
-    signal_recherche_caractere = pyqtSignal(str)
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
+        # --- Mise en page générale --------------------------------------
         layout = QVBoxLayout()
-        self.label_nom_fichier = QLabel("📄 Nom Du Fichier")
-        self.label_nom_fichier2 = QLineEdit("")
-        self.label_nom_auteur = QLabel("✏️ Nom De L’Auteur")
-        self.label_nom_auteur2 = QLineEdit("")
-        self.label_date = QLabel("📆 Date De Création")
-        self.label_date2 = QLineEdit("")
-        self.label_nom_projet = QLabel("📁 Nom Du Projet")
-        self.label_nom_projet2 = QLineEdit("")
-        self.label_adresse_magasin = QLabel("📬️ Adresse Du Magasin")
-        self.label_adresse_magasin2 = QLineEdit("")
+        self.setLayout(layout)
 
-        layout.addWidget(self.label_nom_fichier)
-        layout.addWidget(self.label_nom_fichier2)
-        layout.addWidget(self.label_nom_auteur)
-        layout.addWidget(self.label_nom_auteur2)
-        layout.addWidget(self.label_date)
-        layout.addWidget(self.label_date2)
-        layout.addWidget(self.label_nom_projet)
-        layout.addWidget(self.label_nom_projet2)
-        layout.addWidget(self.label_adresse_magasin)
-        layout.addWidget(self.label_adresse_magasin2)
-        
+        # ----------------------------------------------------------------
+        # Nom du projet
+        # ----------------------------------------------------------------
+        layout.addWidget(QLabel("📁 Nom Du Projet"))
+        self.line_nom_projet = QLineEditDefault("nom_projet.txt")
+        self.line_nom_projet.setText("nom_projet.txt")
+        btn_clear_projet = self._make_clear_button(self.line_nom_projet)
+        row_projet = self._wrap_row(self.line_nom_projet, btn_clear_projet)
+        layout.addLayout(row_projet)
+
+        # ----------------------------------------------------------------
+        # Nom de l’auteur
+        # ----------------------------------------------------------------
+        layout.addWidget(QLabel("✏️ Nom De L’Auteur"))
+        self.line_nom_auteur = QLineEditDefault("Auteur inconnu")
+        self.line_nom_auteur.setText("Auteur inconnu")
+        btn_clear_auteur = self._make_clear_button(self.line_nom_auteur)
+        row_auteur = self._wrap_row(self.line_nom_auteur, btn_clear_auteur)
+        layout.addLayout(row_auteur)
+
+        # ----------------------------------------------------------------
+        # Date de création (lecture seule, renseignée automatiquement)
+        # ----------------------------------------------------------------
+        layout.addWidget(QLabel("📆 Date De Création"))
+        self.line_date = QLineEdit(date.today().strftime("%d/%m/%Y"))
+        self.line_date.setReadOnly(True)
+        layout.addWidget(self.line_date)
+
+        # ----------------------------------------------------------------
+        # Nom du magasin
+        # ----------------------------------------------------------------
+        layout.addWidget(QLabel("🏪 Nom Du Magasin"))
+        self.line_nom_magasin = QLineEditDefault("MonMagasin")
+        self.line_nom_magasin.setText("MonMagasin")
+        btn_clear_magasin = self._make_clear_button(self.line_nom_magasin)
+        row_magasin = self._wrap_row(self.line_nom_magasin, btn_clear_magasin)
+        layout.addLayout(row_magasin)
+
+        # ----------------------------------------------------------------
+        # Adresse du magasin
+        # ----------------------------------------------------------------
+        layout.addWidget(QLabel("📬️ Adresse Du Magasin"))
+        self.line_adresse = QLineEditDefault("0 Rue Exemple, 00000 Ville")
+        self.line_adresse.setText("0 Rue Exemple, 00000 Ville")
+        btn_clear_adresse = self._make_clear_button(self.line_adresse)
+        row_adresse = self._wrap_row(self.line_adresse, btn_clear_adresse)
+        layout.addLayout(row_adresse)
+
         layout.addStretch()
 
-        self.setLayout(layout)
-        
-# Programme principal : test de la vue ---------------------------------------
-if __name__ == "__main__":
+    # ------------------------------------------------------------------
+    # Méthodes utilitaires privées
+    # ------------------------------------------------------------------
+    def _make_clear_button(self, line_edit: QLineEdit) -> QPushButton:
+        """Crée un petit bouton ❌ qui vide *line_edit* lorsqu’on clique."""
 
-    print(f' --- main --- ')
+        button = QPushButton("❌")
+        button.setFixedWidth(30)
+        button.clicked.connect(line_edit.clear)
+        return button
+
+    def _wrap_row(self, *widgets) -> QHBoxLayout:
+        """Emballe les *widgets* dans un `QHBoxLayout`."""
+
+        row = QHBoxLayout()
+        for w in widgets:
+            row.addWidget(w)
+        return row
+
+    # ------------------------------------------------------------------
+    # Slot public : permet à un autre composant d’injecter le nom de projet
+    # ------------------------------------------------------------------
+    @pyqtSlot(str)
+    def set_nom_projet(self, nom: str) -> None:
+        """Remplit le champ *Nom du projet* avec *nom*."""
+
+        self.line_nom_projet.setText(nom)
+
+
+# ---------------------------------------------------------------------------
+# Programme principal (test autonome)
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    
     fenetre = Informations()
+    fenetre.resize(400, 300)
     fenetre.show()
-    
     sys.exit(app.exec())
