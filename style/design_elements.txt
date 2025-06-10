@@ -1,0 +1,40 @@
+* Bande en haut de l'application : 
+	Gris foncé ✅ (code Hexa)
+	Padding à voir
+	Plusieurs onglets :
+		* Fichier qui contient (pour l'instant) :
+			Ouvrir
+			Enregistrer
+		* Crédit
+
+* Liste des produits à gauche :
+	Police Nunito 
+	Catégories -> 18px underlined
+	Produits -> 14px
+	Genre de menu hamburger pour afficher les produits de cette catégorie.
+
+* Options cliquables en haut à gauche :
+	Police Nunito, 18px underlined
+	* Mettre un mur -> Gris clair (Code Hexa)
+	* Mettre une caisse -> Rouge (Code Hexa)
+	* Mettre une entrée -> Bleu (Code Hexa)
+
+* Boutons en bas du plan :
+	Ovales
+	* Vider les éléments -> Vert (Code Hexa)
+	* Changer de plan -> Orange (Code Hexa)
+	* Supprimer le plan -> Rouge (Code Hexa)
+
+* Valeurs en haut à droite :
+	Nunito 18px
+	/!\ Emojis /!\
+	Tous modifiables SAUF "Date de création" qui est déterminée automatiquement (Travail Noa)
+
+* Infos cases en bas à droite :
+	Affichage quand case du plan cliquée. 
+	Numéro de case (ex : A16 ou K02)
+	Liste produits dans la case -> Bouton supprimer Rouge (comme supprimer le plan) 
+	Bouton en haut à droite, permettant de vider complétement la case cliquée -> Rouge (comme supprimer le plan)		
+
+
+/!\ Mode clair/sombre /!\	
