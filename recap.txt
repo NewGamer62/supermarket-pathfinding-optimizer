@@ -1,4 +1,4 @@
-Mardi 10 Juin :
+Mardi 10 Juin : 8h30 à 11h30 et 13h00 à 17h30
 
 - Louis : J'ai organiser le groupe (leader) et répartit certaines tâche sur Trello et créer certaines branches. J'ai réalisé la vue du plan pour le magasin (zoom, grille, ajustement,...)
 - Jules : Réalisation Logo d'équipe, de la charte graphique des vue (optionnelle) et le futur design des éléments des vues (plan_vue.png)
