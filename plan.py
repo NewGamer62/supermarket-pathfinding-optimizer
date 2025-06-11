@@ -26,11 +26,11 @@ class Plan(QWidget):
         self.layout_principal = QVBoxLayout()
         self.setLayout(self.layout_principal)
 
-        # Layout intermédiaire pour l'image et l'espaceur
+        # Layout pour l'image :
         self.layout_image = QVBoxLayout()
         self.layout_principal.addLayout(self.layout_image, stretch=1)
 
-        # Zone de zoom/image :
+        # Zone de zoom :
         self.zone_zoom = QScrollArea()
         self.zone_zoom.setWidgetResizable(False)
         self.zone_zoom.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -38,25 +38,21 @@ class Plan(QWidget):
         self.zone_zoom.setWidget(self.image_widget)
         self.layout_image.addWidget(self.zone_zoom, stretch=1)
 
-        # Espaceur vertical pour pousser les contrôles vers le bas
-        from PyQt6.QtWidgets import QSpacerItem, QSizePolicy
-        self.layout_image.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-
-        # Bouton charger plan (centré si pas d'image)
+        # Bouton charger plan (centré si pas d'image) :
         self.bouton_charger_plan = QPushButton("Ouvrir un plan/une image")
         self.bouton_charger_plan.clicked.connect(self.ouvrir_dialogue_chargement)
         self.bouton_charger_plan.setFixedSize(200, 60)
         self.bouton_charger_plan.setVisible(True)
         self.setAcceptDrops(True)  # Permet le drag & drop sur la fenêtre
 
-        # Layout pour centrer le bouton
+        # Layout pour centrer le bouton charger plan :
         self.layout_centre = QVBoxLayout()
         self.layout_centre.addStretch()
         self.layout_centre.addWidget(self.bouton_charger_plan, alignment=Qt.AlignmentFlag.AlignCenter)
         self.layout_centre.addStretch()
         self.layout_image.addLayout(self.layout_centre)
 
-        # Contrôles pour la taille de la grille
+        # Contrôles pour la taille de la grille (Slider et boutons) :
         self.layout_grille = QHBoxLayout()
         self.bouton_moins = QPushButton("-")
         self.bouton_plus = QPushButton("+")
@@ -83,8 +79,10 @@ class Plan(QWidget):
         self.layout_params = QHBoxLayout()
         self.bouton_supprimer_plan = QPushButton("Supprimer le plan")
         self.bouton_supprimer_plan.clicked.connect(self.supprimer_plan)
+        
         self.bouton_vider_grille = QPushButton("Vider la grille")
         self.bouton_vider_grille.clicked.connect(self.vider_grille)
+        
         self.layout_params.addWidget(self.bouton_supprimer_plan)
         self.layout_params.addWidget(self.bouton_vider_grille)
         self.layout_principal.addLayout(self.layout_params)
@@ -98,6 +96,12 @@ class Plan(QWidget):
         self.bouton_haut.clicked.connect(lambda: self.image_widget.decalerGrille(0, -5))
         self.bouton_bas.clicked.connect(lambda: self.image_widget.decalerGrille(0, 5))
 
+        # Connexion du signal pour la sélection d'une case produit
+        self.image_widget.produits_case_selectionnee.connect(self.reception_produits_case)
+
+        # Connexion du signal
+        #self.image_widget.matrice_generee.connect(self.afficher_matrice_console)
+
         self.mettre_a_jour_affichage()
         
         
@@ -108,23 +112,37 @@ class Plan(QWidget):
     def ouvrir_dialogue_chargement(self):
         # Ouvre un dialogue pour charger une image
         chemin, _ = QFileDialog.getOpenFileName(self, "Ouvrir un plan", "", "Images (*.png *.jpg *.jpeg)")
-        if chemin:
+        if chemin :
             self.chemin_image = chemin
             self.image_widget.charger_image(chemin)
             self.mettre_a_jour_affichage()
 
     def supprimer_plan(self):
         # Popup de confirmation avant suppression du plan
-        reponse = QMessageBox.question(self, "Confirmation", "Voulez-vous vraiment supprimer le plan et toutes les cases ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        if reponse == QMessageBox.StandardButton.Yes:
+        message = QMessageBox(self)
+        message.setWindowTitle("Confirmation")
+        message.setText("Voulez-vous vraiment supprimer le plan et toutes les cases ?")
+        oui = message.addButton("Oui", QMessageBox.ButtonRole.YesRole)
+        message.addButton("Non", QMessageBox.ButtonRole.NoRole)
+        message.setDefaultButton(oui)
+        message.exec()
+        
+        if message.clickedButton() == oui :
             self.chemin_image = None
             self.image_widget.supprimer_image()
             self.mettre_a_jour_affichage()
 
     def vider_grille(self):
         # Popup de confirmation avant de vider la grille
-        reponse = QMessageBox.question(self, "Confirmation", "Voulez-vous vraiment vider toutes les cases de la grille ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        if reponse == QMessageBox.StandardButton.Yes:
+        message = QMessageBox(self)
+        message.setWindowTitle("Confirmation")
+        message.setText("Voulez-vous vraiment vider toutes les cases de la grille ?")
+        oui = message.addButton("Oui", QMessageBox.ButtonRole.YesRole)
+        message.addButton("Non", QMessageBox.ButtonRole.NoRole)
+        message.setDefaultButton(oui)
+        message.exec()
+        
+        if message.clickedButton() == oui :
             self.image_widget.vider_elt()
             self.image_widget.update()
 
@@ -135,7 +153,7 @@ class Plan(QWidget):
             self.zone_zoom.setVisible(True)
             self.bouton_charger_plan.setVisible(False)
             
-            # Active les boutons de la grille et les paramètres
+            # Active les boutons de la grille et les paramètres :
             for i in range(self.layout_grille.count()):
                 widget = self.layout_grille.itemAt(i).widget()
                 if widget:
@@ -144,6 +162,7 @@ class Plan(QWidget):
                 widget = self.layout_params.itemAt(i).widget()
                 if widget:
                     widget.setEnabled(True)
+                    
         # Si aucune image n'est chargée, on cache la zone de zoom et on désactive les contrôles
         else:
             self.zone_zoom.setVisible(False)
@@ -178,6 +197,11 @@ class Plan(QWidget):
                     self.image_widget.charger_image(chemin)
                     self.mettre_a_jour_affichage()
                     break
+
+    def reception_produits_case(self, produits):
+        # Méthode appelée quand une case produit est sélectionnée (aucun type magasin sélectionné)
+        # produits est une liste de str
+        print("Produits de la case sélectionnée :", produits)
 
 # Programme principal : test de la vue ---------------------------------------
 if __name__ == "__main__":
