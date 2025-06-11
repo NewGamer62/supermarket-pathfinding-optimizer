@@ -44,12 +44,17 @@ Sinon, elles prennent leurs valeurs par défaut :\n
     - La date actuelle pour la date de création
     - "Supermarché Inconnué pour le nom du supermarché
     - "Adresse Inconnue" pour l'adresse du supermarché'''
+    
+        # Gestion des exceptions
+        assert(isinstance(nomJSON, (str|None))), "Le chemin du fichier à lire doit être une chaine de caractères ou ne doit pas avoir de valeur"
         
         # fichier JSON fourni : lecture fichier
         if (nomJSON) : self.lireFichier(nomJSON)
         
         # sinon : valeurs par défaut  
         else : self.setInfos("Projet sans Nom", "Auteur Inconnu", datetime.now().date(), "Supermarché Inconnu", "Adresse Inconnue")
+          
+        
         
     # --- Manipulation fichiers --- #
     
@@ -59,6 +64,7 @@ Sinon, elles prennent leurs valeurs par défaut :\n
 Paramètres :
     - nomJSON : str -> nom (ou chemin) du fichier JSON à lire'''
 
+        assert(isinstance(nomJSON, str)), "Le chemin du fichier à lire doit être une chaine de caractères"
         assert(nomJSON[len(nomJSON) - 5:] == ".json"), "Le fichier à lire n'est pas un fichier JSON"
         assert(os.path.exists(nomJSON)), "Le fichier à lire n'existe pas"
         
@@ -68,6 +74,8 @@ Paramètres :
         # Récupération informations
         self.setInfos(infosJSON['nom'], infosJSON['auteur'], datetime.strptime(infosJSON['date création'], '%Y-%m-%d').date(), infosJSON['nom supermarché'], infosJSON['adresse supermarché'])
     
+    
+    
     def ecrireFichier(self, nomJSON : str) -> None :
         
         '''Enregistre les informations sous format JSON\n
@@ -76,6 +84,7 @@ Paramètres :
     
         # --- Gestion exceptions --- #
         
+        assert(isinstance(nomJSON, str)), "Le chemin du fichier à écrire doit être une chaine de caractères"
         assert(nomJSON[len(nomJSON) - 5:] == ".json"), "Le fichier à écrire n'est pas un fichier JSON"
     
         # --- Variables locales --- #
