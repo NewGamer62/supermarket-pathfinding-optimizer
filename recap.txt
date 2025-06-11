@@ -1,6 +1,14 @@
-Mardi 10 Juin : 8h30 à 11h30 et 13h00 à 17h30
+Mardi 10 Juin : 8h30 à 11h30 et 13h00 à 17h30 (en présentiel)
 
 - Louis : J'ai organiser le groupe (leader) et répartit certaines tâche sur Trello et créer certaines branches. J'ai réalisé la vue du plan pour le magasin (zoom, grille, ajustement,...)
 - Jules : Réalisation Logo d'équipe, de la charte graphique des vue (optionnelle) et le futur design des éléments des vues (plan_vue.png)
 - Noa : Aujourd'hui j'ai fait le figma pour avoir l'idée générale de l'application avec Jules (plan_vue.png). Ensuite j'ai commencé à faire l'application n°1 en commençant par la partie supérieure droite (informations) et j'ai ainsi découpé les vues pour faciliter le travail en équipe sur les vues (exemple, avec Louis)
 - Valentin : Je me suis chargé de la conception du modèle commun aux deux applications. J'ai d'abord réalisé un schéma représentant toutes les classes nécessaires à la réalisation du modèle ainsi que leurs attributs et leurs méthodes (dans plan_modele.pdf). Puis j'ai discuté avec mes camarades pour déterminer les éléments à laisser et à garder dans les modèles. Enfin, j'ai développé de A à Z la classe Informations qui fera partie du modèle final, et cela en comprenant les commentaires, docstrings et les tests unitaires.
+
+
+Mercredi 11 Juin : 8h30 à 11h30 et 13h00 à 17h30 (en présentiel)
+
+- Louis : J'ai toujours recadrer l'équipe. J'ai fini le premier prototype du plan (dont, le imageZoomable.py), c'est à dire l'ajout d'une matrice, convertie à ce qu'on a dans la grille de Qt et qui sera donner au contrôleur, puis au modèle. Il manque encore des petits réglages mais ça sera fait sûrement demain en faisant une première fusion/teste de l'application.
+- Jules : Matin, examen Cisco. Après midi, j'ai terminé le texte design_elements qui contient toutes les modifications graphiques à apporter à la vue. J'ai commencé et presque terminé le dossier Clair.qss, il permet de styliser la vue de la 1ère application en mode clair.
+- Noa : Aujourd'hui j'ai fais les parties de vues pour la liste des produits par case, fini celle des informations, fait le bandeau et les boutons pour placer les éléments sur le plan.
+- Valentin : J'ai continué la conception du modèle de l'application. Ayant précédemment fini la classe Informations, j'ai développé la classe Supermarché qui fera également partie du modèle final. La majorité des méthodes concernant la première application ont été développées, et cela en comptant les commentaires docstrings. Il ne reste plus qu'à développer les méthodes pour la deuxième application, les tests pour la classe Supermarché et le modèle final rassemblant Informations et Supermarché.
