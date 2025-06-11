@@ -1,0 +1,109 @@
+"files.associations": {
+    "*.qss": "css"
+}
+
+
+/* -----------[ BANDEAU !! ]----------- */
+
+QMenuBar {
+    background-color : #505050;
+}
+
+QMenu {
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+/* MAYBE A FAIRE MAIS MAYBE NON !! Noa a dit que c'était okay sans style
+QAction {
+
+}
+*/
+
+QMessageBox {
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+/* -----------[ ELEMENTS MAGASIN!! ]----------- */
+
+QPushButton#mur {
+    background-color : #C8C8C8;
+    border : 1px solid #000000;
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+QPushButton#mur : hover {
+    background-color : #A0A0A0;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+QPushButton#caisse {
+    background-color : #FF4C4C;
+    border : 1px solid #000000;
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+QPushButton#caisse : hover {
+    background-color : #CC3C3C;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+QPushButton#entree {
+    background-color : #81E8FF;
+    border : 1px solid #000000;
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+QPushButton#entree : hover {
+    background-color : #52BBD9;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+/* -----------[ INFORMATIONS !! ]----------- */
+
+QLabel {
+    font-family : "Nunito";
+    font-size : 18px;
+}
+
+QLineEditParDefaut {
+    font-family : "Nunito";
+    font-size : 18px;
+}
+
+QPushButton#fermer {
+    background-color : #FF9A9A;
+    border : 1px solid #000000;
+}
+
+QPushButton#fermer : hover {
+    background-color : #D47474;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+/* -----------[ PLAN !! ]----------- */
+
+
+
+/* -----------[ A GARDER POUR L'INSTANT !! ]----------- */
+
+QPushButton {
+    background-color : #ffffff;
+    border : 1px solid #000000;
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+QPushButton : hover {
+    background-color : #e0e0e0;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
