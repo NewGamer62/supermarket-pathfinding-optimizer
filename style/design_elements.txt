@@ -1,5 +1,54 @@
+Mode clair :
+
+Police noire
+
 * Bande en haut de l'application : 
-	Gris foncé ✅ (code Hexa)
+	Gris foncé ✅ (#505050)
+	Padding à voir
+	Plusieurs onglets :
+		* Fichier qui contient (pour l'instant) :
+			Ouvrir
+			Enregistrer
+		* Crédit
+
+* Liste des produits à gauche :
+	Police Nunito
+	Catégories -> 18px underlined
+	Produits -> 14px
+	Genre de menu hamburger pour afficher les produits de cette catégorie.
+
+* Options cliquables en haut à gauche :
+	Police Nunito, 18px underlined
+	* Mettre un mur -> Gris clair (#C8C8C8)
+	* Mettre une caisse -> Rouge (#FF4C4C)
+	* Mettre une entrée -> Bleu (#81E8FF)
+
+* Boutons en bas du plan :
+	Ovales
+	* Vider les éléments -> Vert (#4FFF4C)
+	* Changer de plan -> Orange (#FFA100)
+	* Supprimer le plan -> Rouge (#FF4C4C)
+
+* Valeurs en haut à droite :
+	Nunito 18px
+	/!\ Emojis /!\
+	Tous modifiables SAUF "Date de création" qui est déterminée automatiquement (Travail Noa)
+
+* Infos cases en bas à droite :
+	Affichage quand case du plan cliquée. 
+	Numéro de case (ex : A16 ou K02)
+	Liste produits dans la case -> Bouton supprimer Rouge (comme supprimer le plan) 
+	Bouton en haut à droite, permettant de vider complétement la case cliquée -> Rouge (comme supprimer le plan)		
+
+
+/!\ Mode clair/sombre /!\
+
+Mode sombre :
+
+Police blanche
+
+* Bande en haut de l'application : 
+	Gris clair ✅ (#C8C8C8)
 	Padding à voir
 	Plusieurs onglets :
 		* Fichier qui contient (pour l'instant) :
@@ -15,15 +64,15 @@
 
 * Options cliquables en haut à gauche :
 	Police Nunito, 18px underlined
-	* Mettre un mur -> Gris clair (Code Hexa)
-	* Mettre une caisse -> Rouge (Code Hexa)
-	* Mettre une entrée -> Bleu (Code Hexa)
+	* Mettre un mur -> Gris foncé (#505050)
+	* Mettre une caisse -> Rouge clair (#FF9A9A)
+	* Mettre une entrée -> Bleu clair (#C0F4FF)
 
 * Boutons en bas du plan :
 	Ovales
-	* Vider les éléments -> Vert (Code Hexa)
-	* Changer de plan -> Orange (Code Hexa)
-	* Supprimer le plan -> Rouge (Code Hexa)
+	* Vider les éléments -> Vert clair (#B5FFB3)
+	* Changer de plan -> Orange clair (#FFCD9A)
+	* Supprimer le plan -> Rouge clair (#FF9A9A)
 
 * Valeurs en haut à droite :
 	Nunito 18px
@@ -33,8 +82,5 @@
 * Infos cases en bas à droite :
 	Affichage quand case du plan cliquée. 
 	Numéro de case (ex : A16 ou K02)
-	Liste produits dans la case -> Bouton supprimer Rouge (comme supprimer le plan) 
-	Bouton en haut à droite, permettant de vider complétement la case cliquée -> Rouge (comme supprimer le plan)		
-
-
-/!\ Mode clair/sombre /!\	
+	Liste produits dans la case -> Bouton supprimer Rouge clair (comme supprimer le plan) 
+	Bouton en haut à droite, permettant de vider complétement la case cliquée -> Rouge clair (comme supprimer le plan)	
