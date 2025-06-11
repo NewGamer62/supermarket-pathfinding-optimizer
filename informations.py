@@ -11,30 +11,32 @@ from datetime import date
 from PyQt6.QtCore import pyqtSlot
 from PyQt6.QtWidgets import (QApplication,QLabel,QHBoxLayout,QLineEdit,QPushButton,QVBoxLayout,QWidget)
 
-
 # ---------------------------------------------------------------------------
 # QLineEdit personnalisé : remet un texte par défaut si l’utilisateur
 #                         quitte la case en laissant le champ vide.
 # ---------------------------------------------------------------------------
-class QLineEditDefault(QLineEdit):
-    """QLineEdit qui restaure *default_text* sur perte de focus si vide."""
 
-    def __init__(self, default_text: str = "", parent: QWidget | None = None):
+class QLineEditParDefaut(QLineEdit):
+    """QLineEdit qui restaure *texteParDefaut* sur perte de focus si vide."""
+
+    def __init__(self, texteParDefaut: str = "", parent: QWidget | None = None):
         super().__init__(parent)
-        self._default_text = default_text
+        self._texteParDefaut = texteParDefaut
 
     # ---------------------------------------------------------------------
     # Événement : perte de focus
     # ---------------------------------------------------------------------
-    def focusOutEvent(self, event):
-        super().focusOutEvent(event)
+
+    def focusOutEvent(self, evenement):
+        super().focusOutEvent(evenement)
         if not self.text().strip():
-            self.setText(self._default_text)
+            self.setText(self._texteParDefaut)
 
 
 # ---------------------------------------------------------------------------
 # Vue Informations
 # ---------------------------------------------------------------------------
+
 class Informations(QWidget):
     """Zone d’informations située en haut à droite de l’application."""
 
@@ -42,94 +44,113 @@ class Informations(QWidget):
         super().__init__()
 
         # --- Mise en page générale --------------------------------------
+
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         # ----------------------------------------------------------------
         # Nom du projet
         # ----------------------------------------------------------------
+
         layout.addWidget(QLabel("📁 Nom Du Projet"))
-        self.line_nom_projet = QLineEditDefault("nom_projet.txt")
-        self.line_nom_projet.setText("nom_projet.txt")
-        btn_clear_projet = self._make_clear_button(self.line_nom_projet)
-        row_projet = self._wrap_row(self.line_nom_projet, btn_clear_projet)
-        layout.addLayout(row_projet)
+        self.ligneNomProjet = QLineEditParDefaut("nom_projet.txt")
+        self.ligneNomProjet.setText("nom_projet.txt")
+        boutonSupprProjet = self._boutonSuppr(self.ligneNomProjet)
+        rangeeProjet = self._envelopperRangee(self.ligneNomProjet, boutonSupprProjet)
+        layout.addLayout(rangeeProjet)
 
         # ----------------------------------------------------------------
         # Nom de l’auteur
         # ----------------------------------------------------------------
+
         layout.addWidget(QLabel("✏️ Nom De L’Auteur"))
-        self.line_nom_auteur = QLineEditDefault("Auteur inconnu")
-        self.line_nom_auteur.setText("Auteur inconnu")
-        btn_clear_auteur = self._make_clear_button(self.line_nom_auteur)
-        row_auteur = self._wrap_row(self.line_nom_auteur, btn_clear_auteur)
-        layout.addLayout(row_auteur)
+        self.ligneNomAuteur = QLineEditParDefaut("Auteur inconnu")
+        self.ligneNomAuteur.setText("Auteur inconnu")
+        boutonSupprAuteur = self._boutonSuppr(self.ligneNomAuteur)
+        rangeeAuteur = self._envelopperRangee(self.ligneNomAuteur, boutonSupprAuteur)
+        layout.addLayout(rangeeAuteur)
 
         # ----------------------------------------------------------------
         # Date de création (lecture seule, renseignée automatiquement)
         # ----------------------------------------------------------------
+
         layout.addWidget(QLabel("📆 Date De Création"))
-        self.line_date = QLineEdit(date.today().strftime("%d/%m/%Y"))
-        self.line_date.setReadOnly(True)
-        layout.addWidget(self.line_date)
+        self.ligneDate = QLineEdit(date.today().strftime("%d/%m/%Y"))
+        self.ligneDate.setReadOnly(True)
+        layout.addWidget(self.ligneDate)
 
         # ----------------------------------------------------------------
         # Nom du magasin
         # ----------------------------------------------------------------
+
         layout.addWidget(QLabel("🏪 Nom Du Magasin"))
-        self.line_nom_magasin = QLineEditDefault("MonMagasin")
-        self.line_nom_magasin.setText("MonMagasin")
-        btn_clear_magasin = self._make_clear_button(self.line_nom_magasin)
-        row_magasin = self._wrap_row(self.line_nom_magasin, btn_clear_magasin)
-        layout.addLayout(row_magasin)
+        self.ligneNomMagasin = QLineEditParDefaut("MonMagasin")
+        self.ligneNomMagasin.setText("MonMagasin")
+        boutonSupprMagasin = self._boutonSuppr(self.ligneNomMagasin)
+        rangeeMagasin = self._envelopperRangee(self.ligneNomMagasin, boutonSupprMagasin)
+        layout.addLayout(rangeeMagasin)
 
         # ----------------------------------------------------------------
         # Adresse du magasin
         # ----------------------------------------------------------------
+
         layout.addWidget(QLabel("📬️ Adresse Du Magasin"))
-        self.line_adresse = QLineEditDefault("0 Rue Exemple, 00000 Ville")
-        self.line_adresse.setText("0 Rue Exemple, 00000 Ville")
-        btn_clear_adresse = self._make_clear_button(self.line_adresse)
-        row_adresse = self._wrap_row(self.line_adresse, btn_clear_adresse)
-        layout.addLayout(row_adresse)
+        self.ligneAdresse = QLineEditParDefaut("0 Rue Exemple, 00000 Ville")
+        self.ligneAdresse.setText("0 Rue Exemple, 00000 Ville")
+        boutonSupprAdresse = self._boutonSuppr(self.ligneAdresse)
+        rangeeAdresse = self._envelopperRangee(self.ligneAdresse, boutonSupprAdresse)
+        layout.addLayout(rangeeAdresse)
 
         layout.addStretch()
 
     # ------------------------------------------------------------------
     # Méthodes utilitaires privées
     # ------------------------------------------------------------------
-    def _make_clear_button(self, line_edit: QLineEdit) -> QPushButton:
-        """Crée un petit bouton ❌ qui vide *line_edit* lorsqu’on clique."""
 
-        button = QPushButton("❌")
-        button.setFixedWidth(30)
-        button.clicked.connect(line_edit.clear)
-        return button
+    def _boutonSuppr(self, ligneModifier: QLineEdit) -> QPushButton:
+        """Crée un petit bouton ❌ qui vide *ligneModifier* et lui redonne le focus."""
 
-    def _wrap_row(self, *widgets) -> QHBoxLayout:
+        boutton = QPushButton("❌")
+        boutton.setFixedWidth(30)
+
+        def nettoyerEtPreparer():
+            ligneModifier.clear()
+            ligneModifier.setFocus()
+
+        boutton.clicked.connect(nettoyerEtPreparer)
+        return boutton
+
+
+    def _envelopperRangee(self, *widgets) -> QHBoxLayout:
         """Emballe les *widgets* dans un `QHBoxLayout`."""
 
-        row = QHBoxLayout()
+        rangee = QHBoxLayout()
         for w in widgets:
-            row.addWidget(w)
-        return row
+            rangee.addWidget(w)
+        return rangee
 
     # ------------------------------------------------------------------
     # Slot public : permet à un autre composant d’injecter le nom de projet
     # ------------------------------------------------------------------
+
     @pyqtSlot(str)
-    def set_nom_projet(self, nom: str) -> None:
+    def setNomProjet(self, nom: str) -> None:
         """Remplit le champ *Nom du projet* avec *nom*."""
 
-        self.line_nom_projet.setText(nom)
+        self.ligneNomProjet.setText(nom)
 
 
 # ---------------------------------------------------------------------------
 # Programme principal (test autonome)
 # ---------------------------------------------------------------------------
+
 if __name__ == "__main__":
+
+    print(f' --- main --- ')
     app = QApplication(sys.argv)
+
     fenetre = Informations()
     fenetre.resize(400, 300)
     fenetre.show()
+
     sys.exit(app.exec())
