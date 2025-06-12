@@ -70,6 +70,18 @@ class Controleur:
         '''
         Modifier
         '''
+        # Vérifie et agrandit le quadrillage si besoin avant modification
+        quadrillage = self.modele.supermarche.getQuadrillage()
+        hauteur = len(quadrillage)
+        longueur = len(quadrillage[0]) if hauteur > 0 else 0
+        agrandir = False
+        if y >= hauteur:
+            self.modele.supermarche.setHauteur(y + 1)
+            agrandir = True
+        if x >= longueur:
+            self.modele.supermarche.setLongueur(x + 1)
+            agrandir = True
+        # Après agrandissement éventuel, on peut modifier la case
         self.modele.supermarche.setCase(x, y, contenu)
 
     def changementInfos(self, infos: dict) -> None:

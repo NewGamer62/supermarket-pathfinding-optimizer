@@ -237,10 +237,11 @@ Paramètres :
         
     
     def getLongueur(self) -> int :
-        
         '''Retourne la longueur du quadrillage'''
-        
-        return len(self.getQuadrillage()[-1])
+        quadrillage = self.getQuadrillage()
+        if not quadrillage or len(quadrillage) == 0:
+            return 0
+        return len(quadrillage[-1])
     
     def getHauteur(self) -> int :
         
@@ -286,7 +287,10 @@ Dans le cas contraires, des cases déjà existantes seront supprimées.'''
         
         assert(isinstance(hauteur, int)), "La hauteur du quadrillage doit être un entier supérieur à 1"
         assert(hauteur >= 2), "La hauteur du quadrillage doit être un entier supérieur à 1"
-        
+        # Correction : si le quadrillage est vide, on initialise une ligne de base
+        if not self.__quadrillage or self.getLongueur() == 0:
+            self.__quadrillage = [[[] for _ in range(2)] for _ in range(hauteur)]
+            return
         # Augmentation de la hauteur du quadrillage
         if (hauteur > self.getHauteur()) :
                 
