@@ -1,10 +1,19 @@
+# Formation : BUT 1ʳᵉ année | 2024-2025
+# Ressource : SAE S2 - Algo et Graphes
+# Professeur : M. Conoir
+# Noms :  AMEDRO Louis (TPD)
+#         HERBAUX Jules (TPD)
+#         GAILLARD Noa (TPC)
+#         MINNEBO Valentin (TPA)
+
 import sys
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QApplication)
 from PyQt6.QtCore import pyqtSignal
 
 # ----------------------------------------------------------------------------- 
-# --- class ElementsMagasin
+# --- class Partie Haute Gauche
 # -----------------------------------------------------------------------------
+
 class ElementsMagasin(QWidget):
 
     signal_element = pyqtSignal(str)  # ✅ Signal général pour envoyer "Mur", "Caisse", "Entree"
@@ -39,7 +48,10 @@ class ElementsMagasin(QWidget):
     def entree(self):
         self.signal_element.emit("entree")
 
-# Programme principal : test de la vue ---------------------------------------
+# ----------------------------------------------------------------------------- 
+# --- Main
+# -----------------------------------------------------------------------------
+
 if __name__ == "__main__":
     def afficher_element(element):
         print(f"🛠️ Élément choisi : {element}")
