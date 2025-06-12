@@ -6,7 +6,6 @@
 #         GAILLARD Noa (TPC)
 #         MINNEBO Valentin (TPA)
 
-
 import modele, vue
 
 #=====================================
@@ -30,8 +29,9 @@ class Controller:
         self.vue.EnregistrerFichier.connect(self.enregistrerFichier)
         self.vue.changementCase.connect(self.changementCase) #Il me faut les coordonnées du clic (x, y) (ajout/suppression de produits)
         self.vue.changementInfos.connect(self.changementInfos)
-
-
+        self.vue.matrice_generee.connect(self.modele.setQuadrillage)
+        #self.vue.produit_case_selectionnee.connect(self.modele.getProduitCaseSelectionnee)
+        
         
     #==========================
     #== Méthodes :
