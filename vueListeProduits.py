@@ -34,6 +34,7 @@ class ListeProduits(QWidget):
         self.boutonOuvrir.clicked.connect(self.ouvrirFichier)
         self.layoutPrincipal.addWidget(self.boutonOuvrir, alignment=Qt.AlignmentFlag.AlignCenter)
 
+        # Boutons de gestion des produits :
         self.boutonsGestionLayout = QHBoxLayout()
         self.boutonSupprimer = QPushButton("Supprimer")
         self.boutonChanger = QPushButton("Changer")
@@ -45,10 +46,12 @@ class ListeProduits(QWidget):
         self.boutonSupprimer.hide()
         self.boutonChanger.hide()
 
+        # Titre de la liste des produits :
         self.labelTitre = QLabel("Liste Des Produits :")
         self.layoutPrincipal.addWidget(self.labelTitre)
         self.labelTitre.hide()
 
+        # Zone de défilement pour les produits :
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.scrollContent = QWidget()
@@ -57,21 +60,27 @@ class ListeProduits(QWidget):
         self.layoutPrincipal.addWidget(self.scroll)
         self.scroll.hide()
 
+    #=========================
+    # --- Méthodes
+    #=========================
+
     def ouvrirFichier(self):
+        # Ouvre un dialogue pour choisir un fichier JSON
         chemin, _ = QFileDialog.getOpenFileName(self, "Ouvrir un fichier JSON", "", "JSON Files (*.json)")
         if chemin:
             self.chargerFichier(chemin)
 
     def chargerFichier(self, chemin):
+        # Charge le fichier JSON et met à jour l'affichage
         with open(chemin, "r", encoding="utf-8") as f:
             self.produitsParCategorie = json.load(f)
-
-        self.clearScroll()
+        self.effaceScroll()
         self.boutonsProduits.clear()
 
+        # Pour chaque catégorie de produits :
         for categorie, produits in self.produitsParCategorie.items():
             # Bouton de catégorie (fermé par défaut)
-            boutonCategorie = QPushButton(f"► {categorie}")
+            boutonCategorie = QPushButton(f"▶️ {categorie}")
             boutonCategorie.setCheckable(True)
             boutonCategorie.setChecked(False)
             boutonCategorie.setStyleSheet("font-weight: bold; text-align: left;")
@@ -83,6 +92,7 @@ class ListeProduits(QWidget):
             layoutContenu.setContentsMargins(20, 0, 0, 10)
             frameContenu.setVisible(False)
 
+            # Ajout des boutons de produits dans la catégorie :
             for produit in produits:
                 boutonProduit = QPushButton(produit)
                 boutonProduit.setStyleSheet("text-align: left;")
@@ -100,6 +110,7 @@ class ListeProduits(QWidget):
 
             boutonCategorie.toggled.connect(toggleContenu)
 
+        # Affichage des boutons de gestion et du titre
         self.boutonSupprimer.show()
         self.boutonChanger.show()
         self.labelTitre.show()
@@ -107,37 +118,55 @@ class ListeProduits(QWidget):
         self.boutonOuvrir.hide()
 
     def selectionnerProduit(self, nom, boutonClique):
-        for bouton in self.boutonsProduits:
-            bouton.setChecked(False)
-            bouton.setStyleSheet("text-align: left;")
-
-        boutonClique.setChecked(True)
-        boutonClique.setStyleSheet("""
-            background-color: #ADD8E6;
-            font-weight: bold;
-            text-align: left;
-        """)
-
-        self.signalProduitSelectionne.emit(nom)
+        # Si déjà sélectionné, déselectionne tout
+        if boutonClique.isChecked():
+            deja_selectionne = boutonClique.property("selectionne") == True
+            for bouton in self.boutonsProduits:
+                bouton.setChecked(False)
+                bouton.setStyleSheet("text-align: left;")
+                bouton.setProperty("selectionne", False)
+            if not deja_selectionne:
+                boutonClique.setChecked(True)
+                boutonClique.setStyleSheet("""
+                    background-color: #ADD8E6;
+                    font-weight: bold;
+                    text-align: left;
+                """)
+                boutonClique.setProperty("selectionne", True)
+                self.signalProduitSelectionne.emit(nom)
+            else:
+                # Déselection : n'émet rien ou émet une valeur spéciale si besoin
+                boutonClique.setProperty("selectionne", False)
+                # self.signalProduitSelectionne.emit("")  # Décommenter si besoin d'un signal sur déselection
+        else:
+            boutonClique.setProperty("selectionne", False)
+            boutonClique.setStyleSheet("text-align: left;")
+            # self.signalProduitSelectionne.emit("")  # Décommenter si besoin d'un signal sur déselection
 
     def confirmerSuppression(self):
-        confirmation = QMessageBox.question(
-            self, "Confirmation", "Êtes-vous sûr de vouloir supprimer la liste en cours ?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        if confirmation == QMessageBox.StandardButton.Yes:
+        # Demande de confirmation avant de supprimer la liste
+        message = QMessageBox(self)
+        message.setWindowTitle("Confirmation")
+        message.setText("Êtes-vous sûr de vouloir supprimer la liste en cours ?")
+        oui = message.addButton("Oui", QMessageBox.ButtonRole.YesRole)
+        non = message.addButton("Non", QMessageBox.ButtonRole.NoRole)
+        message.setDefaultButton(non)
+        message.exec()
+        if message.clickedButton() == oui:
             self.reinitialiser()
 
     def reinitialiser(self):
+        # Réinitialise l'état de la liste de produits
         self.produitsParCategorie = {}
-        self.clearScroll()
+        self.effaceScroll()
         self.boutonSupprimer.hide()
         self.boutonChanger.hide()
         self.labelTitre.hide()
         self.scroll.hide()
         self.boutonOuvrir.show()
 
-    def clearScroll(self):
+    def effaceScroll(self):
+        # Supprime tous les widgets du layout de défilement
         while self.scrollLayout.count():
             item = self.scrollLayout.takeAt(0)
             widget = item.widget()

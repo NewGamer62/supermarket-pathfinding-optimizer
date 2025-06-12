@@ -9,7 +9,7 @@
 import sys
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QApplication,
-    QHBoxLayout, QPushButton
+    QHBoxLayout, QPushButton, QMessageBox  # Ajout QMessageBox
 )
 from PyQt6.QtCore import pyqtSignal
 
@@ -30,6 +30,7 @@ class ContenuCase(QWidget):
 
         self.donneesProduits = {}  
         self.caseActuelle = None
+        self.listeProduitsCourante = None  # Ajout pour mémoriser la liste courante si ce n'est pas une case nommée
 
         mainLayout = QVBoxLayout()
         headerLayout = QHBoxLayout()
@@ -38,6 +39,7 @@ class ContenuCase(QWidget):
         
         self.labelProduits = QLabel("Liste des produits de la case :")
         self.btnSupprimerTout = QPushButton("❌")
+        self.btnSupprimerTout.setVisible(False)  # Caché par défaut
         self.btnSupprimerTout.setFixedWidth(30)
         self.btnSupprimerTout.clicked.connect(self.supprimerTousLesProduits)
 
@@ -52,27 +54,44 @@ class ContenuCase(QWidget):
 
         mainLayout.addStretch()
         self.setLayout(mainLayout)
+        
+    def miseAJourCase(self, nomCase):
+        # Si on reçoit une liste (produits), on affiche directement cette liste
+        if isinstance(nomCase, list):
+            self.listeProduitsCourante = list(nomCase)  # Copie pour édition locale
+            # Nettoyage
+            for i in reversed(range(self.layoutProduits.count())):
+                widget = self.layoutProduits.itemAt(i).widget()
+                if widget:
+                    widget.setParent(None)
+            for produit in self.listeProduitsCourante:
+                self.ajouterLigneProduit(produit)
+            self.caseActuelle = None  # On n'est pas sur une case nommée
+            # Affiche ou cache la croix selon si la liste est vide
+            self.btnSupprimerTout.setVisible(bool(self.listeProduitsCourante))
+            return
+        # Accepte aussi une chaîne (nom de case)
+        if not isinstance(nomCase, str):
+            return
+        self.caseActuelle = nomCase
+        self.listeProduitsCourante = None
+        # Nettoyage
+        for i in reversed(range(self.layoutProduits.count())):
+            widget = self.layoutProduits.itemAt(i).widget()
+            if widget:
+                widget.setParent(None)
+        # Affichage des produits de la case (tuple)
+        produits = self.donneesProduits.get(nomCase, [])
+        for produit in produits:
+            self.ajouterLigneProduit(produit)
+        # Affiche ou cache la croix selon si la liste est vide
+        self.btnSupprimerTout.setVisible(bool(produits))
+
 
     def miseAJourDonnees(self, dicoProduits: dict):
         self.donneesProduits = dicoProduits
         if self.caseActuelle:
             self.miseAJourCase(self.caseActuelle)
-
-    def miseAJourCase(self, nomCase: str):
-        self.caseActuelle = nomCase
-
-        # ---------------------------------------------------------------------------
-        # Nettoyage
-        # ---------------------------------------------------------------------------
-
-        for i in reversed(range(self.layoutProduits.count())):
-            widget = self.layoutProduits.itemAt(i).widget()
-            if widget:
-                widget.setParent(None)
-
-        produits = self.donneesProduits.get(nomCase, [])
-        for produit in produits:
-            self.ajouterLigneProduit(produit)
 
     def ajouterLigneProduit(self, nomProduit: str):
         ligne = QHBoxLayout()
@@ -91,12 +110,49 @@ class ContenuCase(QWidget):
         self.layoutProduits.addWidget(ligneWidget)
 
     def supprimerTousLesProduits(self):
+        # Popup de confirmation avant suppression
+        message = QMessageBox(self)
+        message.setWindowTitle("Confirmation")
+        message.setText("Voulez-vous vraiment supprimer tous les produits de la case ?")
+        oui = message.addButton("Oui", QMessageBox.ButtonRole.YesRole)
+        non = message.addButton("Non", QMessageBox.ButtonRole.NoRole)
+        message.setDefaultButton(non)
+        message.exec()
+        if message.clickedButton() != oui:
+            return
+        # Cas où on affiche une liste directe (case rouge, pas une case nommée)
+        if self.listeProduitsCourante is not None:
+            self.listeProduitsCourante.clear()
+            # Nettoyage affichage
+            for i in reversed(range(self.layoutProduits.count())):
+                widget = self.layoutProduits.itemAt(i).widget()
+                if widget:
+                    widget.setParent(None)
+            # Émet la liste vide pour synchroniser le plan
+            self.produitsRestantsApresSuppression.emit([])
+            return
+        # Cas classique : suppression dans le dico
         if self.caseActuelle in self.donneesProduits:
             self.donneesProduits[self.caseActuelle] = []
             self.miseAJourCase(self.caseActuelle)
             self.produitsRestantsApresSuppression.emit([])
 
     def supprimerProduit(self, produit: str):
+        # Cas où on affiche une liste directe (case rouge, pas une case nommée)
+        if self.listeProduitsCourante is not None:
+            if produit in self.listeProduitsCourante:
+                self.listeProduitsCourante.remove(produit)
+                # Rafraîchit l'affichage
+                for i in reversed(range(self.layoutProduits.count())):
+                    widget = self.layoutProduits.itemAt(i).widget()
+                    if widget:
+                        widget.setParent(None)
+                for p in self.listeProduitsCourante:
+                    self.ajouterLigneProduit(p)
+                # Émet la nouvelle liste au plan (qui mettra à jour la vraie source)
+                self.produitsRestantsApresSuppression.emit(self.listeProduitsCourante)
+            return
+        # Cas classique : suppression dans le dico
         if self.caseActuelle in self.donneesProduits:
             if produit in self.donneesProduits[self.caseActuelle]:
                 self.donneesProduits[self.caseActuelle].remove(produit)
@@ -108,18 +164,9 @@ class ContenuCase(QWidget):
 # -----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    def afficherListeProduits(produits):
-        print(f"[Signal] Produits restants : {produits}")
 
     app = QApplication(sys.argv)
     fenetre = ContenuCase()
-    fenetre.produitsRestantsApresSuppression.connect(afficherListeProduits)
-
-    fenetre.miseAJourDonnees({
-        "A1": ["lait", "riz", "pâtes"],
-        "B2": ["sucre"]
-    })
-    fenetre.miseAJourCase("A1")
 
     fenetre.show()
     sys.exit(app.exec())

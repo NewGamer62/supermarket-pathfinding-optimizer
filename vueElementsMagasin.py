@@ -26,27 +26,41 @@ class ElementsMagasin(QWidget):
 
         # Mur
         self.mettreMur = QPushButton("🧱 Mettre un mur")
+        self.mettreMur.setCheckable(True)
         layout.addWidget(self.mettreMur)
-        self.mettreMur.clicked.connect(self.mur)
+        self.mettreMur.clicked.connect(lambda: self.selectionner("mur", self.mettreMur))
 
         # Caisse
         self.mettreCaisse = QPushButton("💰️ Mettre une caisse")
+        self.mettreCaisse.setCheckable(True)
         layout.addWidget(self.mettreCaisse)
-        self.mettreCaisse.clicked.connect(self.caisse)
+        self.mettreCaisse.clicked.connect(lambda: self.selectionner("caisse", self.mettreCaisse))
 
         # Entrée
         self.mettreEntree = QPushButton("⬆️ Mettre une entrée")
+        self.mettreEntree.setCheckable(True)
         layout.addWidget(self.mettreEntree)
-        self.mettreEntree.clicked.connect(self.entree)
+        self.mettreEntree.clicked.connect(lambda: self.selectionner("entree", self.mettreEntree))
 
-    def mur(self):
-        self.signal_element.emit("mur")
+        self.boutons = [self.mettreMur, self.mettreCaisse, self.mettreEntree]
+        
+    #=========================
+    # --- Méthodes
+    #=========================
 
-    def caisse(self):
-        self.signal_element.emit("caisse")
-
-    def entree(self):
-        self.signal_element.emit("entree")
+    def selectionner(self, type_case, boutonClique):
+        # Désélectionne tous les boutons sauf celui cliqué
+        for bouton in self.boutons:
+            if bouton is not boutonClique:
+                bouton.setChecked(False)
+                bouton.setStyleSheet("")
+        # Met en surbrillance le bouton sélectionné
+        if boutonClique.isChecked():
+            boutonClique.setStyleSheet("background-color: #ADD8E6; font-weight: bold;")
+            self.signal_element.emit(type_case)
+        else:
+            boutonClique.setStyleSheet("")
+            self.signal_element.emit("") # Si aucun bouton n'est sélectionné, on peut émettre rien
 
 # ----------------------------------------------------------------------------- 
 # --- Main

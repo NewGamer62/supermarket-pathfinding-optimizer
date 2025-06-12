@@ -54,18 +54,18 @@ class Plan(QWidget):
 
         # Contrôles pour la taille de la grille (Slider et boutons) :
         self.layout_grille = QHBoxLayout()
-        self.bouton_moins = QPushButton("-")
-        self.bouton_plus = QPushButton("+")
+        self.bouton_moins = QPushButton("➖️")
+        self.bouton_plus = QPushButton("➕️")
         self.slider_grille = QSlider(Qt.Orientation.Horizontal)
         self.slider_grille.setMinimum(5)
         self.slider_grille.setMaximum(500)
         self.slider_grille.setValue(80)
         self.slider_grille.setTickInterval(5)
         self.slider_grille.setSingleStep(1)
-        self.bouton_gauche = QPushButton("←")
-        self.bouton_droite = QPushButton("→")
-        self.bouton_haut = QPushButton("↑")
-        self.bouton_bas = QPushButton("↓")
+        self.bouton_gauche = QPushButton("⬇️")
+        self.bouton_droite = QPushButton("➡️")
+        self.bouton_haut = QPushButton("⬆️")
+        self.bouton_bas = QPushButton("⬇️")
         self.layout_grille.addWidget(self.bouton_moins)
         self.layout_grille.addWidget(self.slider_grille)
         self.layout_grille.addWidget(self.bouton_plus)
@@ -201,7 +201,7 @@ class Plan(QWidget):
     def reception_produits_case(self, produits):
         # Méthode appelée quand une case produit est sélectionnée (aucun type magasin sélectionné)
         # produits est une liste de str
-        print("Produits de la case sélectionnée :", produits)
+        pass  # Suppression du print
 
     def mettre_a_jour_matrice(self, matrice):
         # Met à jour la matrice de l'image_widget

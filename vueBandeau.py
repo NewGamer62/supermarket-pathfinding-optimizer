@@ -24,12 +24,12 @@ class Bandeau(QMainWindow):
     signalFichier = pyqtSignal(str)
     signalEnregistrer = pyqtSignal(str)
     signalEnregistrerSous = pyqtSignal(str)
+    signalPleinEcran = pyqtSignal(bool)  # Ajout d'un signal
 
     def __init__(self):
         super().__init__()
 
         self.setMinimumSize(800, 600)
-        self.setWindowTitle("Bandeau SAE - Algo & Graphes")
         self.etatPleinEcran = False
         self.cheminFichierActuel = None  # chemin courant
 
@@ -48,7 +48,7 @@ class Bandeau(QMainWindow):
 
         # --- Actions pour "Fichier" ---
         ouvrirAction = QAction("📂 Ouvrir", self)
-        ouvrirAction.triggered.connect(self.ouvrirFichier)
+        ouvrirAction.triggered.connect(self.ouvrirDossier)
         fichierMenu.addAction(ouvrirAction)
 
         enregistrerAction = QAction("💾 Enregistrer", self)
@@ -71,14 +71,13 @@ class Bandeau(QMainWindow):
         # --- Action "Plein écran" ---
         self.action_fullscreen = QAction("🖥️ Plein écran", self)
         self.action_fullscreen.setCheckable(True)
-        self.action_fullscreen.triggered.connect(self.modePleinEcran)
+        self.action_fullscreen.triggered.connect(self.demanderPleinEcran)
         affichageMenu.addAction(self.action_fullscreen)
 
-    # --- Méthode pour ouvrir un fichier ---
-    def ouvrirFichier(self):
-        chemin, _ = QFileDialog.getOpenFileName(self, "Ouvrir un fichier", "", "Tous les fichiers (*)")
+    # --- Méthode pour ouvrir un dossier ---
+    def ouvrirDossier(self):
+        chemin = QFileDialog.getExistingDirectory(self, "Ouvrir un dossier", "")
         if chemin:
-            print(f"[DEBUG] Fichier sélectionné : {chemin}")
             self.cheminFichierActuel = chemin
             self.signalFichier.emit(chemin)
 
@@ -99,13 +98,8 @@ class Bandeau(QMainWindow):
             self.signalEnregistrerSous.emit(chemin)
 
     # --- Méthode pour gérer le plein écran ---
-    def modePleinEcran(self, checked):
-        if checked:
-            self.showFullScreen()
-            self.etatPleinEcran = True
-        else:
-            self.showNormal()
-            self.etatPleinEcran = False
+    def demanderPleinEcran(self, checked):
+        self.signalPleinEcran.emit(checked)
 
     def clePressee(self, event):
         if event.key() == Qt.Key.Key_Escape and self.etatPleinEcran:

@@ -18,10 +18,10 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     
     # Création du Contrôleur :
-    controleur = controleur.Controleur()
+    controleur_instance = controleur.Controleur()
 
     # Affichage de la Vue du Contrôleur
-    controleur.vue.show()
+    controleur_instance.vue.show()
     
     # lancement de l'application  
     sys.exit(app.exec())

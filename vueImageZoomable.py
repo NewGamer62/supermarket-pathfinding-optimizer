@@ -38,7 +38,7 @@ class ImageZoomable(QLabel):
         self.cases_mur = set()
         self.cases_caisse = set()
         self.cases_entree = set()
-        self.type_case_actuel = "mur"  # Par défaut, rien sélectionné
+        self.type_case_actuel = ""  # Par défaut, rien sélectionné
         
         # Initialisation des états de la souris/curseur :
         self._deplacement_active = False 
@@ -143,7 +143,7 @@ class ImageZoomable(QLabel):
         self.emettre_matrice()
 
     def changer_type_case(self, case, type_case):
-        # 
+        # Change le type de la case spécifiée (mur, caisse, entrée) et met à jour l'affichage
         self.cases_mur.discard(case)
         self.cases_caisse.discard(case)
         self.cases_entree.discard(case)
@@ -227,20 +227,6 @@ class ImageZoomable(QLabel):
             if 0 <= x < w and 0 <= y < h:
                 affichage.fillRect(x, y, int(taille_case), int(taille_case), couleur_entree)
 
-        # Affichage des produits dans les cases
-        font = QFont()
-        font.setPointSize(int(taille_case // 3))
-        affichage.setFont(font)
-        for (col, ligne), produits in self.cases_produits.items():
-            if not produits:
-                continue
-            x = int(col * taille_case + decalage_x)
-            y = int(ligne * taille_case + decalage_y)
-            if 0 <= x < w and 0 <= y < h:
-                texte = produits[-1]
-                affichage.setPen(QPen(Qt.GlobalColor.red))
-                affichage.drawText(x+2, y+int(taille_case*0.7), texte)
-
         # Grille :
         affichage.setPen(QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.SolidLine, Qt.PenCapStyle.FlatCap, Qt.PenJoinStyle.MiterJoin))
         x = decalage_x
@@ -259,19 +245,14 @@ class ImageZoomable(QLabel):
         if type_case in ("mur", "caisse", "entree"):
             self.type_case_actuel = type_case
         else:
-            self.type_case_actuel = "mur"  # Toujours revenir à mur si signal inconnu
+            self.type_case_actuel = ""  # Toujours revenir à mur si signal inconnu
 
     @pyqtSlot(str)
     def recevoir_signal_produit(self, produit):
-        # Ajoute un produit dans la dernière case sélectionnée (ou à définir selon logique)
-        # Ici, on suppose que la dernière case sélectionnée est stockée dans self._derniere_case
-        if hasattr(self, "_derniere_case") and self._derniere_case is not None:
-            case = self._derniere_case
-            if case not in self.cases_produits:
-                self.cases_produits[case] = []
-            self.cases_produits[case].append(produit)
-            self.update()
-            self.emettre_matrice()
+        # Ajoute un produit dans la dernière case sélectionnée
+        self.type_case_actuel = produit
+        self.update()
+        self.emettre_matrice()
 
     @pyqtSlot(list)
     def mettre_a_jour_produits_case(self, produits):
@@ -329,6 +310,66 @@ class ImageZoomable(QLabel):
                     self.cases_produits[(col, lig)] = produits
         self.update()
         self.emettre_matrice()  # Émet la matrice après mise à jour
+        
+        
+    def ajouter_cellule(self, event):
+        # Ajoute une cellule à la sélection en fonction de la position de l'événement de souris de Qt
+        x = int(event.position().x())
+        y = int(event.position().y())
+        taille_case = self.taille_grille * self.zoom
+        if taille_case < 5:
+            taille_case = 5
+        decalage_x = self.grille_x * self.zoom
+        decalage_y = self.grille_y * self.zoom
+        col = int((x - decalage_x) // taille_case)
+        ligne = int((y - decalage_y) // taille_case)
+        if (x - decalage_x) >= 0 and (y - decalage_y) >= 0:
+            cellule = (col, ligne)
+            self._derniere_case = cellule  # Mémorise la dernière case sélectionnée
+            if self.type_case_actuel in (None, "", "mur", "caisse", "entree"):
+                if self.type_case_actuel in ("mur", "caisse", "entree"):
+                    self.changer_type_case(cellule, self.type_case_actuel)
+                else:
+                    # Toujours émettre une liste (même vide) pour le signal
+                    produits = self.cases_produits.get(cellule, [])
+                    self.produits_case_selectionnee.emit(produits)
+                    self.update()
+            else:
+                if cellule not in self.cases_produits:
+                    self.cases_produits[cellule] = []
+                # Ajout sans doublon
+                if self.type_case_actuel not in self.cases_produits[cellule]:
+                    self.cases_produits[cellule].append(self.type_case_actuel)
+                self.produits_case_selectionnee.emit(self.cases_produits[cellule])
+                self.update()
+                self.emettre_matrice()
+                self.type_case_actuel = ""
+
+    def supprimer_cellule(self, event):
+        # Supprime une cellule de n'importe quel type en fonction de la position de l'événement de souris de Qt
+        
+        x = int(event.position().x())
+        y = int(event.position().y())
+        taille_case = self.taille_grille * self.zoom
+
+        if taille_case < 5:
+            taille_case = 5
+
+        decalage_x = self.grille_x * self.zoom
+        decalage_y = self.grille_y * self.zoom
+        col = int((x - decalage_x) // taille_case)
+        ligne = int((y - decalage_y) // taille_case)
+
+        # Vérifie que la position est valide avant de supprimer la cellule :
+        if (x - decalage_x) >= 0 and (y - decalage_y) >= 0:
+            cellule = (col, ligne)
+            self.cases_mur.discard(cellule)
+            self.cases_caisse.discard(cellule)
+            self.cases_entree.discard(cellule)
+            # Supprime aussi les produits de cette case
+            self.cases_produits.pop(cellule, None)
+            self.update()
+            self.emettre_matrice()
 
     def wheelEvent(self, event: QWheelEvent):
         # Gère le zoom avec la molette de la souris de Qt
@@ -461,61 +502,7 @@ class ImageZoomable(QLabel):
         else:
             super().mouseReleaseEvent(event)
 
-    def ajouter_cellule(self, event):
-        # Ajoute une cellule à la sélection en fonction de la position de l'événement de souris de Qt
-        
-        x = int(event.position().x())
-        y = int(event.position().y())
-        
-        taille_case = self.taille_grille * self.zoom # Taille de la case en fonction du zoom
-        
-        if taille_case < 5:
-            taille_case = 5
-        
-        # Décalage de la grille en fonction du zoom :
-        decalage_x = self.grille_x * self.zoom
-        decalage_y = self.grille_y * self.zoom
-        col = int((x - decalage_x) // taille_case)
-        ligne = int((y - decalage_y) // taille_case)
-        
-        if (x - decalage_x) >= 0 and (y - decalage_y) >= 0:
-            cellule = (col, ligne)
-            self._derniere_case = cellule  # Mémorise la dernière case sélectionnée
-            # Si aucun type d'élément magasin n'est sélectionné, on sélectionne la case "produit"
-            if self.type_case_actuel is None:
-                # Émet la liste des produits de cette case (vide si aucun produit)
-                produits = self.cases_produits.get(cellule, [])
-                self.produits_case_selectionnee.emit(produits)
-                self.update()
-            else:
-                # Toujours appliquer le type courant (par défaut "mur")
-                self.changer_type_case(cellule, self.type_case_actuel)
-
-    def supprimer_cellule(self, event):
-        # Supprime une cellule de n'importe quel type en fonction de la position de l'événement de souris de Qt
-        
-        x = int(event.position().x())
-        y = int(event.position().y())
-        taille_case = self.taille_grille * self.zoom
-
-        if taille_case < 5:
-            taille_case = 5
-
-        decalage_x = self.grille_x * self.zoom
-        decalage_y = self.grille_y * self.zoom
-        col = int((x - decalage_x) // taille_case)
-        ligne = int((y - decalage_y) // taille_case)
-
-        # Vérifie que la position est valide avant de supprimer la cellule :
-        if (x - decalage_x) >= 0 and (y - decalage_y) >= 0:
-            cellule = (col, ligne)
-            self.cases_mur.discard(cellule)
-            self.cases_caisse.discard(cellule)
-            self.cases_entree.discard(cellule)
-            # Supprime aussi les produits de cette case
-            self.cases_produits.pop(cellule, None)
-            self.update()
-            self.emettre_matrice()
+    
 
     def avoir_image(self):
         return not self.image.isNull()

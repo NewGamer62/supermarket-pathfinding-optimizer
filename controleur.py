@@ -24,47 +24,62 @@ class Controleur:
         self.modele = modele.Projet()
         self.vue = vue.Vue()
         
-        # Signaux entrant / Signaux venant de la Vue :
+        # Connexions des signaux venant de la Vue :
         self.vue.OuvertureFichier.connect(self.ouvrirFichier)
         self.vue.EnregistrerFichier.connect(self.enregistrerFichier)
-        self.vue.changementCase.connect(self.changementCase) #Il me faut les coordonnées du clic (x, y) (ajout/suppression de produits)
+        self.vue.changementCase.connect(self.changementCase)
         self.vue.changementInfos.connect(self.changementInfos)
-        self.vue.matrice_generee.connect(self.modele.setQuadrillage)
-        #self.vue.produit_case_selectionnee.connect(self.modele.getProduitCaseSelectionnee)
-        
-        
-    #==========================
-    #== Méthodes :
-    #==========================
-    
+        self.vue.matrice_generee.connect(self.modele.supermarche.setQuadrillage)
+        # Synchronisation initiale
+        self.synchroniser_vue_modele()
+
     def ouvrirFichier(self, chemin: str) -> None:
         '''
         Modifier
         '''
         self.modele = modele.Projet(chemin)
-        self.vue.matrice_a_appliquer(self.modele.getQuadrillage())
-    
+        self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
+        self.synchroniser_vue_modele()
+
+    def synchroniser_vue_modele(self):
+        # Synchronise les infos et la liste des produits du modèle vers la vue
+        infos = self.modele.informations.getInfos()
+        #à mettre dans la vue (plan->image chemin et infos) !!!
+        
+
     def enregistrerFichier(self, chemin: str) -> None:
         '''
         Modifier
         '''
-        self.modele.enregistrer(chemin)
-    
+        # Synchronise les infos et produits de la vue vers le modèle avant sauvegarde
+        if hasattr(self.vue.informations, "getInfos"):
+            infos = self.vue.informations.getInfos()
+            self.modele.informations.setInfos(
+                infos['nom'],
+                infos['auteur'],
+                infos['date création'],
+                infos['nom supermarché'],
+                infos['adresse supermarché'],
+            )
+        if hasattr(self.vue.listeProduits, "getProduits"):
+            produits = self.vue.listeProduits.getProduits()
+            self.modele.supermarche.setListeProduits(produits)
+        self.modele.ecrireDossier(chemin)
+
     def changementCase(self, x: int, y: int, contenu : list) -> None:
         '''
         Modifier
         '''
-        self.modele.updateCase(x, y, contenu)
-    
+        self.modele.supermarche.setCase(x, y, contenu)
+
     def changementInfos(self, infos: dict) -> None:
         '''
         Modifier
         '''
-        self.modele.setInfos(
+        self.modele.informations.setInfos(
             infos['nom'],
             infos['auteur'],
-            infos['date_creation'],
-            infos['nom_supermarche'],
-            infos['adresse_supermarche'],
+            infos['date création'],
+            infos['nom supermarché'],
+            infos['adresse supermarché'],
         )
-    
