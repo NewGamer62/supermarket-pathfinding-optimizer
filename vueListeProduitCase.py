@@ -13,16 +13,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import pyqtSignal
 
-
-import sys
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QApplication,
-    QHBoxLayout, QPushButton
-)
-from PyQt6.QtCore import pyqtSignal
-
 # -----------------------------------------------------------------------------
-# --- class Partie_basse_droite
+# --- class Partie Basse Droite
 # -----------------------------------------------------------------------------
 
 class ContenuCase(QWidget):
