@@ -20,6 +20,7 @@ QAction {
 }
 */
 
+/* Sert aussi dans plan.py */
 QMessageBox {
     font-family : "Nunito";
     font-size : 14px;
@@ -68,6 +69,7 @@ QPushButton#entree : hover {
 
 /* -----------[ INFORMATIONS !! ]----------- */
 
+/* Sert aussi dans listeProduitCase.py */
 QLabel {
     font-family : "Nunito";
     font-size : 18px;
@@ -78,6 +80,7 @@ QLineEditParDefaut {
     font-size : 18px;
 }
 
+/* Sert aussi dans listeProduitCase.py (fermer) et plan.py (-)*/
 QPushButton#fermer {
     background-color : #FF9A9A;
     border : 1px solid #000000;
@@ -91,7 +94,59 @@ QPushButton#fermer : hover {
 
 /* -----------[ PLAN !! ]----------- */
 
+QPushButton#image {
+    background-color : #ffffff;
+    border : 1px solid #000000;
+    font-family : "Nunito";
+    font-size : 14px;
+}
 
+QPushButton#image : hover {
+    background-color : #e0e0e0;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+QPushButton#plus {
+    background-color : #C0FF9E
+    border : 1px solid #000000;
+}
+
+QPushButton#plus : hover {
+    background-color : #98D97F
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+/* Les QPushButton basiques sont utilisés pour chaque flèche directionnelle */
+
+QPushButton {
+    background-color : #ffffff;
+    border : 1px solid #000000;
+    font-family : "Nunito";
+    font-size : 14px;
+}
+
+QPushButton : hover {
+    background-color : #e0e0e0;
+    color : #2b2b2b;
+    border : 1.5px solid #000000;
+}
+
+QPushButton : pressed {
+    background-color: #B0B0B0;
+    padding-top: -15px;
+    padding-bottom: -17px;
+}
+
+QSlider::handle:horizontal {
+    border: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px; 
+    margin: -4px 0;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+}
 
 /* -----------[ A GARDER POUR L'INSTANT !! ]----------- */
 
