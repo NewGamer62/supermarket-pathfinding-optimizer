@@ -41,7 +41,8 @@ class Controller:
         '''
         Modifier
         '''
-        self.modele = modele.Projet(chemin) 
+        self.modele = modele.Projet(chemin)
+        self.vue.matrice_a_appliquer(self.modele.getQuadrillage())
     
     def enregistrerFichier(self, chemin: str) -> None:
         '''
