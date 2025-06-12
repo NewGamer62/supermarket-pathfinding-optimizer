@@ -17,7 +17,7 @@ from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
 class ImageZoomable(QLabel):
     #Permet de zoomer sur une image et de sélectionner des cellules dans une grille
     
-    matrice_generee = pyqtSignal(list)  # Signal pour transmettre la matrice
+    matrice_generee = pyqtSignal(list)  # Signal sortant : transmet la matrice actuelle
     produits_case_selectionnee = pyqtSignal(list)  # Signal pour transmettre la liste des produits de la case sélectionnée
 
     def __init__(self, chemin, taille_grille=80, grille_x=0, grille_y=0):
@@ -285,6 +285,50 @@ class ImageZoomable(QLabel):
                 self.cases_produits.pop(case, None)
             self.update()
             self.emettre_matrice()
+
+    @pyqtSlot(list)
+    def recevoir_matrice(self, matrice):
+        # Met à jour les cases à partir d'une nouvelle matrice
+        self.cases_mur.clear()
+        self.cases_caisse.clear()
+        self.cases_entree.clear()
+        self.cases_produits.clear()
+        for lig, ligne in enumerate(matrice):
+            for col, cellule in enumerate(ligne):
+                if "mur" in cellule:
+                    self.cases_mur.add((col, lig))
+                if "caisse" in cellule:
+                    self.cases_caisse.add((col, lig))
+                if "entree" in cellule:
+                    self.cases_entree.add((col, lig))
+                # Ajoute les produits (autres que mur/caisse/entree)
+                produits = [elt for elt in cellule if elt not in ("mur", "caisse", "entree")]
+                if produits:
+                    self.cases_produits[(col, lig)] = produits
+        self.update()
+        self.emettre_matrice()
+
+    # Signal entrant : slot pour recevoir une nouvelle matrice et mettre à jour la grille
+    @pyqtSlot(list)
+    def matrice_a_appliquer(self, matrice):
+        # Met à jour les cases à partir d'une nouvelle matrice reçue par signal
+        self.cases_mur.clear()
+        self.cases_caisse.clear()
+        self.cases_entree.clear()
+        self.cases_produits.clear()
+        for lig, ligne in enumerate(matrice):
+            for col, cellule in enumerate(ligne):
+                if "mur" in cellule:
+                    self.cases_mur.add((col, lig))
+                if "caisse" in cellule:
+                    self.cases_caisse.add((col, lig))
+                if "entree" in cellule:
+                    self.cases_entree.add((col, lig))
+                produits = [elt for elt in cellule if elt not in ("mur", "caisse", "entree")]
+                if produits:
+                    self.cases_produits[(col, lig)] = produits
+        self.update()
+        self.emettre_matrice()  # Émet la matrice après mise à jour
 
     def wheelEvent(self, event: QWheelEvent):
         # Gère le zoom avec la molette de la souris de Qt

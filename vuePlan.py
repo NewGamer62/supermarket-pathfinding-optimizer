@@ -203,6 +203,14 @@ class Plan(QWidget):
         # produits est une liste de str
         print("Produits de la case sélectionnée :", produits)
 
+    def mettre_a_jour_matrice(self, matrice):
+        # Met à jour la matrice de l'image_widget
+        self.image_widget.recevoir_matrice(matrice)
+
+    def connecter_signal_matrice(self, signal_externe):
+        # Connecte un signal externe (qui émet une matrice) à l'entrée de l'image_widget
+        signal_externe.connect(self.image_widget.matrice_a_appliquer)
+
 # Programme principal : test de la vue ---------------------------------------
 if __name__ == "__main__":
     app = QApplication(sys.argv)
