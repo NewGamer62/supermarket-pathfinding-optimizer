@@ -6,7 +6,7 @@
 #         GAILLARD Noa (TPC)
 #         MINNEBO Valentin (TPA)
 
-import sys, imageZoomable
+import sys, vueImageZoomable
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QApplication, QScrollArea, QHBoxLayout, QPushButton, QSlider, QFileDialog, QMessageBox
 from PyQt6.QtCore import Qt
 
@@ -34,7 +34,7 @@ class Plan(QWidget):
         self.zone_zoom = QScrollArea()
         self.zone_zoom.setWidgetResizable(False)
         self.zone_zoom.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.image_widget = imageZoomable.ImageZoomable("")
+        self.image_widget = vueImageZoomable.ImageZoomable("")
         self.zone_zoom.setWidget(self.image_widget)
         self.layout_image.addWidget(self.zone_zoom, stretch=1)
 

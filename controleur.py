@@ -12,7 +12,7 @@ import modele, vue
 #== Classe Controleur :
 #=====================================
 
-class Controller:
+class Controleur:
     
     #==========================
     #== Constructeur :
@@ -22,7 +22,7 @@ class Controller:
         
         # Attributs (Modele et Vue) :
         self.modele = modele.Projet()
-        #self.vue = vue.Vue()
+        self.vue = vue.Vue()
         
         # Signaux entrant / Signaux venant de la Vue :
         self.vue.OuvertureFichier.connect(self.ouvrirFichier)
