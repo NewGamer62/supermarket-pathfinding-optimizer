@@ -240,7 +240,7 @@ Paramètres :
         
         '''Retourne la longueur du quadrillage'''
         
-        return len(self.getQuadrillage()[0])
+        return len(self.getQuadrillage()[-1])
     
     def getHauteur(self) -> int :
         
@@ -254,21 +254,61 @@ Paramètres :
         
         return(self.getLongueur(), self.getHauteur())
     
-    # !!!! A ÉCRIRE !!!!
-    # !!!! A ÉCRIRE !!!!
     
-    #def setLongueur(self, longueur : int) -> None :
-    #    
-    #    '''Modifie la longueur du quadrillage'''
-    #    
-    #    assert(isinstance(longueur, int)), "La longueur du quadrillage doit être un entier supérieur à 1"
-    #    assert(longueur >= 2), "La longueur du quadrillage doit être un entier supérieur à 1"
+    def setLongueur(self, longueur : int) -> None :
+        
+        '''Modifie la longueur du quadrillage.
+Si la longueur augmente, alors de nouvelles cases vides sont ajoutées.
+Dans le cas contraires, des cases déjà existantes seront supprimées.'''
+        
+        assert(isinstance(longueur, int)), "La longueur du quadrillage doit être un entier supérieur à 1"
+        assert(longueur >= 2), "La longueur du quadrillage doit être un entier supérieur à 1"
+        
+        for y in range(self.getHauteur()) :
+        
+            # Augmentation de la longueur du quadrillage
+            if (longueur > self.getLongueur()) :
+                    
+                self.__quadrillage[y] = self.__quadrillage[y] + [[] for i in range(longueur - self.getLongueur())]
+            
+            # Réduction de la longueur du quadrillage
+            elif (longueur < self.getLongueur()) :
+                
+                for i in range(self.getLongueur() - longueur) : self.__quadrillage[y].pop(-1)
+                
+                
+                
+    def setHauteur(self, hauteur : int) -> None :
+        
+        '''Modifie la hauteur du quadrillage.
+Si la hauteur augmente, alors de nouvelles cases vides sont ajoutées.
+Dans le cas contraires, des cases déjà existantes seront supprimées.'''
+        
+        assert(isinstance(hauteur, int)), "La hauteur du quadrillage doit être un entier supérieur à 1"
+        assert(hauteur >= 2), "La hauteur du quadrillage doit être un entier supérieur à 1"
+        
+        # Augmentation de la hauteur du quadrillage
+        if (hauteur > self.getHauteur()) :
+                
+            self.__quadrillage = self.__quadrillage + [[[] for i in range(self.getLongueur())] for j in range(hauteur - self.getHauteur())]
+        
+        # Réduction de la hauteur du quadrillage
+        elif (hauteur < self.getHauteur()) :
+            
+            for i in range(self.getHauteur() - hauteur) : self.__quadrillage.pop(-1)
+        
+        
     
-    #setHauteur
-    #setTaille
-           
-    # !!!! A ÉCRIRE !!!!
-    # !!!! A ÉCRIRE !!!!
+    def setTaille(self, longueur : int, hauteur : int) -> None :
+        
+        """Modifie la taille du quadrillage.\n
+Paramètres :
+    - longueur : int -> Nouvelle longueur du quadrillage
+    - hauteur : int -> Nouvelle hauteur du quadrillage"""
+        
+        self.setLongueur(longueur)
+        self.setHauteur(hauteur)
+    
     
     def xValide(self, x : int) -> bool :
         
@@ -319,7 +359,7 @@ Voici les différents types de case pour référence :\n
         # Si la case contient une liste de produits
         elif (len(self.getCase(x,y)) > 1 or not self.getCase(x, y)[0] in ["entrée", "caisse", "mur"]) :
             
-            return "produits"
+            return "produit"
         
         # Si la case est une entrée, une caisse ou un mur
         else :
@@ -354,7 +394,7 @@ Paramètres :
         
         # Gestion exceptions
         
-        assert(isinstance(case, (str|list[str]))), "Le contenu de la case doit être un chaine de caractères ou une liste de chaines de caractères"
+        assert(isinstance(case, (str|list))), "Le contenu de la case doit être un chaine de caractères ou une liste de chaines de caractères"
         if isinstance(case, str) : assert(case in ["entrée", "caisse", "mur", "sol", ""]), "Le contenu de la case est invalide"
         else : 
             for produit in case : assert(isinstance(produit, str)), "Chaque produit de la liste doit être une chaine de caractères"
@@ -362,7 +402,7 @@ Paramètres :
         # Script 
         
         # Cas où la case devient une liste de produits
-        if isinstance(case, list[str]) : self.__quadrillage[y][x] = case
+        if isinstance(case, list) : self.__quadrillage[y][x] = case
         
         # Cas où la case devient vide
         elif (case in ["sol", ""]) : self.__quadrillage[y][x] = []
@@ -388,6 +428,125 @@ Paramètres :
         assert(self.produitEstDansCase(x, y, produit)), "Il est impossible de supprimer un produit déjà absent de la liste"
         
         self.__quadrillage[y][x].remove(produit)
+        
+        
+        
+    def getEntrees(self) -> list[tuple] :
+        
+        '''Retourne la liste des coordonnées de toutes les entrées du supermarché'''
+        
+        # Variables locales
+        listeCases : list[tuple] = []
+        
+        # Script
+        for y in range(len(self.getQuadrillage())) :
+
+            for x in range(len(self.getQuadrillage()[y])) :
+                
+                if (self.getTypeCase(x,y) == "entrée") :
+                    
+                    listeCases.append((x,y))
+                    
+        return listeCases
+    
+    
+    
+    def getCaisses(self) -> list[tuple] :
+        
+        '''Retourne la liste des coordonnées de toutes les caisses du supermarché'''
+        
+        # Variables locales
+        listeCases : list[tuple] = []
+        
+        # Script
+        for y in range(len(self.getQuadrillage())) :
+
+            for x in range(len(self.getQuadrillage()[y])) :
+                
+                if (self.getTypeCase(x,y) == "caisse") :
+                    
+                    listeCases.append((x,y))
+                    
+        return listeCases
+    
+    
+    def getMurs(self) -> list[tuple] :
+        
+        '''Retourne la liste des coordonnées de tous les murs du supermarché'''
+        
+        # Variables locales
+        listeCases : list[tuple] = []
+        
+        # Script
+        for y in range(len(self.getQuadrillage())) :
+
+            for x in range(len(self.getQuadrillage()[y])) :
+                
+                if (self.getTypeCase(x,y) == "mur") :
+                    
+                    listeCases.append((x,y))
+                    
+        return listeCases
+    
+    
+    
+    def getMurs(self) -> list[tuple] :
+        
+        '''Retourne la liste des coordonnées de tous les murs du supermarché'''
+        
+        # Variables locales
+        listeCases : list[tuple] = []
+        
+        # Script
+        for y in range(len(self.getQuadrillage())) :
+
+            for x in range(len(self.getQuadrillage()[y])) :
+                
+                if (self.getTypeCase(x,y) == "mur") :
+                    
+                    listeCases.append((x,y))
+                    
+        return listeCases
+    
+    
+    
+    def getCasesAvecProduits(self) -> list[tuple] :
+        
+        '''Retourne la liste des coordonnées de toutes les cases avec des produits du supermarché'''
+        
+        # Variables locales
+        listeCases : list[tuple] = []
+        
+        # Script
+        for y in range(len(self.getQuadrillage())) :
+
+            for x in range(len(self.getQuadrillage()[y])) :
+                
+                if (self.getTypeCase(x,y) == "produit") :
+                    
+                    listeCases.append((x,y))
+                    
+        return listeCases
+    
+    
+    
+    def getCasesVides(self) -> list[tuple] :
+        
+        '''Retourne la liste des coordonnées de toutes les cases vides du supermarché'''
+        
+        # Variables locales
+        listeCases : list[tuple] = []
+        
+        # Script
+        for y in range(len(self.getQuadrillage())) :
+
+            for x in range(len(self.getQuadrillage()[y])) :
+                
+                if (self.getTypeCase(x,y) == "sol") :
+                    
+                    listeCases.append((x,y))
+                    
+        return listeCases
             
 # ------------ #
 # --- Main --- #
@@ -396,4 +555,32 @@ Paramètres :
 if __name__ == "__main__" :
     
     test = Supermarche()
-    print(test.produitEstDansCase(-1, 1, "test"))
+    
+    for j in range(test.getHauteur()) :
+        
+        test.setCase(2, j, "entrée")
+        test.setCase(3, j, "caisse")
+        test.setCase(4, j, ["Oeufs", "Pain"])
+        test.setCase(5, j, "mur")
+    
+    print(test.getQuadrillage(), "\n")
+    print(test.getEntrees())
+    print(test.getCaisses())
+    print(test.getMurs())
+    print(test.getCasesAvecProduits())
+    print(test.getCasesVides())
+    print(test.getTypeCase(4,0))
+    test.setLongueur(15)
+    print(test.getLongueur())
+    print(test.getQuadrillage(), "\n")
+    test.setLongueur(5)
+    print(test.getLongueur())
+    print(test.getQuadrillage(), "\n")
+    test.setHauteur(12)
+    print(test.getHauteur())
+    print(test.getQuadrillage(), "\n")
+    test.setHauteur(2)
+    print(test.getHauteur())
+    print(test.getQuadrillage(), "\n")
+    test.setTaille(10, 10)
+    print(test.getQuadrillage(), "\n")
