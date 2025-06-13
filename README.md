@@ -1,6 +1,21 @@
 # README :
 
-Pour lire la première application, veuillez lancer "main.py" et lire la notice d'utilisation. Pour la deuxième application, veuillez lancer "mainApp2.py"
+**Dans les dossiers correspondant :**
+
+* Pour lire la première application, veuillez lancer "main.py", lire la notice d'utilisation et tester le projet "Sauvegarde-Test" en ouvrant directement dans l'application. 
+
+* Pour la deuxième application, veuillez lancer "mainApp2.py".
+
+**Remarque :** Certaines actions en particulier risquent de ne pas fonctionner ou même provoquer un plantage. Veuillez nous excuser pour la gêne occasionnée.
+
+___
+
+# Ajouts possibles :
+
+Nous avons penser à (REFAIT LA PHRASE STP LOL ;), installe extension Typora pour le markdown ):
+* une idée
+* idée 2
+* idéé 3, c'est des puce, met une étoile puis un espace
 ___
 
 # Auteurs :
@@ -8,6 +23,9 @@ ___
 * Jules HERBAUX, TPD (Lirei159)
 * Valentin MINNEBO, TPA (Jonedeuf)
 * Noa GAILLARD, TPC (NewGamer62)
+
+!["test"](annexes/logo_APM.png)
+***Réalisé par APP MAKER.***
 
 ___
 
@@ -46,12 +64,12 @@ ___
 * **Valentin :** J'ai encore continué le modèle de l'application. Toute les méthodes de l'application 1 sont finies et j'ai développé la majorité des méthodes concernant l'application 2. J'ai également codé l'ébauche du modèle final utilisé dans l'application. Il me faut encore développer quelques méthodes, rajouter des docstrings, coder le main pour tester la classe supermarché puis créer les docstrings/tests pour le modèle final.
 
 
-### Vendredi 13 Juin : 8h30 à 11h30 et 13h00 à 19h00 (en présentiel)
+### Vendredi 13 Juin : 8h30 à 11h30 et 13h00 à 19h00 (en présentiel, puis télétravail selon les derniers commits)
 
-* **Louis :** 
+* **Louis :** J'ai fini la partie UI (User Interface) avec Jules mais nous avons eu un petit problème avec la police Nunito. On a donc dû repassé dessus. J'ai corriger tous les derniers problèmes de la première application (spoiler, il y en a encore). J'ai réorganiser les dossiers et fusionner tout dans la branche main. J'ai fini en écrivant les derniers petits choses du README.
 
-* **Jules :** (Parti à 17h30) Aujourd'hui j'ai finalisé la partie design (qss) à l'aide de Louis, nous avons essayé d'implémenter une police spécifique sans succès et nous sommes donc revenus à la base. J'ai terminé la notice avec l'application 1 finalisée avec le design. J'ai importé notre journal de bord de la semaine dans notre README.
+* **Jules :** (Parti à 17h30, télétravail) Aujourd'hui j'ai finalisé la partie design (qss) à l'aide de Louis, nous avons essayé d'implémenter une police spécifique sans succès et nous sommes donc revenus à la base. J'ai terminé la notice avec l'application 1 finalisée avec le design. J'ai importé notre journal de bord de la semaine dans notre README.
 
-* **Noa :** (Parti à ???)
+* **Noa :** (Parti à 18h) Aujourd'hui j'ai lié la vue et le modèle grace au controapp2 et établi un mainapp2, en adaptant les fichiers quand nécessaire
 
-* **Valentin :**
+* **Valentin :** J'ai fini le modèle de l'application. Toutes les méthodes sont finies, ainsi que les commentaires docstrings qui les accompagnent. Les seules choses qui manquent sont les tests dans le main.
