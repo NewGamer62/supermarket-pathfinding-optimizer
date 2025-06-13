@@ -51,22 +51,18 @@ class Controleur:
             nb_colonnes = len(quadrillage[0])
             if nb_colonnes > 0:
                 taille_grille = max(min_slider, min(int(largeur_image / nb_colonnes), max_slider))
-        if hasattr(self.vue.plan, "set_taille_grille"):
-            self.vue.plan.set_taille_grille(taille_grille)
+        self.vue.plan.set_taille_grille(taille_grille)
         # Synchroniser les infos à droite
-        if hasattr(self.vue.informations, "setInfos"):
-            self.vue.informations.setInfos(self.modele.informations.getInfos())
+        self.vue.informations.setInfos(self.modele.informations.getInfos())
         # Charger l'image du dossier si elle existe
         self.charger_image_depuis_dossier(chemin)
 
     def synchroniser_vue_modele(self):
         # Synchronise les infos et la liste des produits du modèle vers la vue
         infos = self.modele.informations.getInfos()
-        if hasattr(self.vue.informations, "setInfos"):
-            self.vue.informations.setInfos(infos)
+        self.vue.informations.setInfos(infos)
         # Synchronise la matrice du plan
-        if hasattr(self.vue.plan.image_widget, "matrice_a_appliquer"):
-            self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
+        self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
         # Synchronise l'image si besoin (optionnel, à appeler si nécessaire)
 
     def charger_image_depuis_dossier(self, dossier):
@@ -78,33 +74,30 @@ class Controleur:
         for nom in ["plan.png", "plan.jpg", "plan.jpeg"]:
             chemin_image = os.path.join(dossier_supermarche, nom)
             if os.path.exists(chemin_image):
-                if hasattr(self.vue.plan, "set_image"):
-                    self.vue.plan.set_image(chemin_image)
+                self.vue.plan.set_image(chemin_image)
                 break
 
     def enregistrerFichier(self, chemin: str) -> None:
         # Synchronise les infos et produits de la vue vers le modèle avant sauvegarde
-        if hasattr(self.vue.informations, "getInfos"):
-            infos = self.vue.informations.getInfos()
-            # Conversion de la date si besoin
-            date_creation = infos['date création']
-            if isinstance(date_creation, str):
-                try:
-                    # Essaye de parser la date au format français
-                    date_creation = datetime.strptime(date_creation, "%d/%m/%Y").date()
-                except Exception:
-                    # Sinon, laisse la chaîne telle quelle (le modèle lèvera une erreur si ce n'est pas une date)
-                    pass
-            self.modele.informations.setInfos(
-                infos['nom'],
-                infos['auteur'],
-                date_creation,
-                infos['nom supermarché'],
-                infos['adresse supermarché'],
-            )
-        if hasattr(self.vue.listeProduits, "getProduits"):
-            produits = self.vue.listeProduits.getProduits()
-            self.modele.supermarche.setListeProduits(produits)
+        infos = self.vue.informations.getInfos()
+        # Conversion de la date si besoin
+        date_creation = infos['date création']
+        if isinstance(date_creation, str):
+            try:
+                # Essaye de parser la date au format français
+                date_creation = datetime.strptime(date_creation, "%d/%m/%Y").date()
+            except Exception:
+                # Sinon, laisse la chaîne telle quelle (le modèle lèvera une erreur si ce n'est pas une date)
+                pass
+        self.modele.informations.setInfos(
+            infos['nom'],
+            infos['auteur'],
+            date_creation,
+            infos['nom supermarché'],
+            infos['adresse supermarché'],
+        )
+        produits = self.vue.listeProduits.getProduits()
+        self.modele.supermarche.setListeProduits(produits)
         self.modele.ecrireDossier(chemin)
 
     def changementCase(self, x: int, y: int, contenu : list) -> None:
@@ -112,15 +105,17 @@ class Controleur:
         quadrillage = self.modele.supermarche.getQuadrillage()
         hauteur = len(quadrillage)
         longueur = len(quadrillage[0]) if hauteur > 0 else 0
-        agrandir = False
         if y >= hauteur:
             self.modele.supermarche.setHauteur(y + 1)
-            agrandir = True
         if x >= longueur:
             self.modele.supermarche.setLongueur(x + 1)
-            agrandir = True
         # Après agrandissement éventuel, on peut modifier la case
         self.modele.supermarche.setCase(x, y, contenu)
+        
+        if not contenu in ["entrée", "caisse", "mur", "sol", ""] : 
+            self.modele.supermarche.ajouterProduit(contenu)
+        elif contenu == "" :
+            self.modele.supermarche.setListeProduits([])
 
     def changementInfos(self, infos: dict) -> None:
         self.modele.informations.setInfos(

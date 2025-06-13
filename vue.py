@@ -104,13 +104,13 @@ class Vue(QWidget):
     def _emission_changement_case(self, produits):
         # Cette méthode doit être adaptée pour émettre les coordonnées et la liste de produits
         # Il faut mémoriser la dernière case sélectionnée dans le plan
-        if hasattr(self.plan.image_widget, "_derniere_case") and self.plan.image_widget._derniere_case is not None:
+        if self.plan.image_widget._derniere_case is not None:
             col, lig = self.plan.image_widget._derniere_case
             self.changementCase.emit(col, lig, produits)
 
     def _maj_case_depuis_vue(self, produits):
         # Quand la liste de produits d'une case change (suppression), on émet le signal changementCase
-        if hasattr(self.plan.image_widget, "_derniere_case") and self.plan.image_widget._derniere_case is not None:
+        if self.plan.image_widget._derniere_case is not None:
             col, lig = self.plan.image_widget._derniere_case
             self.changementCase.emit(col, lig, produits)
 

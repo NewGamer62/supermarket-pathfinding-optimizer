@@ -15,8 +15,6 @@ import sys, controleur
 if __name__ == "__main__":
 
     print('\n--- main ---\n')
-    
-    
 
     # Création d'une QApplication
     app = QApplication(sys.argv)

@@ -236,7 +236,7 @@ class ImageZoomable(QLabel):
     @pyqtSlot(list)
     def mettre_a_jour_produits_case(self, produits):
         # Met à jour la liste des produits de la dernière case sélectionnée
-        if hasattr(self, "_derniere_case") and self._derniere_case is not None:
+        if self._derniere_case is not None:
             case = self._derniere_case
             if produits:
                 self.cases_produits[case] = produits
