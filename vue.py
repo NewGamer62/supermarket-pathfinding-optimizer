@@ -39,7 +39,7 @@ class Vue(QWidget):
         self.bandeau.setFixedHeight(40)  # Hauteur réduite du bandeau
         self.elementsMagasin = vueElementsMagasin.ElementsMagasin()
         self.informations = vueInformations.Informations()
-        self.listeProduitCase = vueListeProduitCase.ContenuCase()
+        self.listeProduitCase = vueListeProduitCase.ListeProduitCase()
         self.listeProduits = vueListeProduits.ListeProduits()
         self.plan = vuePlan.Plan()
 
@@ -77,6 +77,10 @@ class Vue(QWidget):
         # 4. Sélection d'un produit dans la liste de gauche -> ajout sur la case sélectionnée du plan
         self.listeProduits.signalProduitSelectionne.connect(self.plan.image_widget.recevoir_signal_produit)
         self.listeProduits.signalProduitSelectionne.connect(self.deselectionner_element_magasin)
+        # Ne pas connecter deselectionner_produit_liste ici !
+
+        # Désélectionne le bouton produit APRES la pose sur le plan
+        self.plan.image_widget.produit_pose.connect(self.deselectionner_produit_liste)
 
         # 5. Signal matrice_generee du plan (émis à chaque modif) -> slot pour traitement éventuel (exemple)
         # self.plan.image_widget.matrice_generee.connect(self.votre_slot_pour_traiter_la_matrice)
@@ -97,29 +101,16 @@ class Vue(QWidget):
         self.plan.image_widget.produits_case_selectionnee.connect(self._emission_changement_case)
         self.listeProduitCase.produitsRestantsApresSuppression.connect(self._maj_case_depuis_vue)
 
-        # Appliquer le style clair à toute l'application si le fichier existe
-        qss_path = os.path.join(os.path.dirname(__file__), "style", "Clair.qss")
-        if os.path.exists(qss_path):
-            with open(qss_path, "r", encoding="utf-8") as f:
-                qss = f.read()
-                # Nettoyage du QSS : retire les lignes JSON ou autres non-QSS
-                qss = "\n".join(line for line in qss.splitlines() if not line.strip().startswith('"files.associations"') and not line.strip().startswith("{") and not line.strip().startswith("}"))
-                app = QApplication.instance()
-                if app is not None:
-                    app.setStyleSheet(qss)
-                else:
-                    self.setStyleSheet(qss)
-
     def _emission_changement_case(self, produits):
         # Cette méthode doit être adaptée pour émettre les coordonnées et la liste de produits
         # Il faut mémoriser la dernière case sélectionnée dans le plan
-        if hasattr(self.plan.image_widget, "_derniere_case") and self.plan.image_widget._derniere_case is not None:
+        if self.plan.image_widget._derniere_case is not None:
             col, lig = self.plan.image_widget._derniere_case
             self.changementCase.emit(col, lig, produits)
 
     def _maj_case_depuis_vue(self, produits):
         # Quand la liste de produits d'une case change (suppression), on émet le signal changementCase
-        if hasattr(self.plan.image_widget, "_derniere_case") and self.plan.image_widget._derniere_case is not None:
+        if self.plan.image_widget._derniere_case is not None:
             col, lig = self.plan.image_widget._derniere_case
             self.changementCase.emit(col, lig, produits)
 
@@ -127,8 +118,9 @@ class Vue(QWidget):
         # Déselectionne tout produit dans la liste de produits
         for bouton in self.listeProduits.boutonsProduits:
             bouton.setChecked(False)
-            bouton.setStyleSheet("text-align: left;")
             bouton.setProperty("selectionne", False)
+            # Force le style par défaut même si le bouton n'est plus checked
+            bouton.setStyleSheet("text-align: left;")
 
     def deselectionner_element_magasin(self, *_):
         # Déselectionne tous les boutons d'éléments magasin

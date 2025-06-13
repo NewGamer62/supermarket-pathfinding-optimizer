@@ -57,12 +57,12 @@ class Plan(QWidget):
         self.bouton_moins = QPushButton("➖️")
         self.bouton_plus = QPushButton("➕️")
         self.slider_grille = QSlider(Qt.Orientation.Horizontal)
-        self.slider_grille.setMinimum(5)
+        self.slider_grille.setMinimum(30)  # Taille minimale
         self.slider_grille.setMaximum(500)
         self.slider_grille.setValue(80)
         self.slider_grille.setTickInterval(5)
         self.slider_grille.setSingleStep(1)
-        self.bouton_gauche = QPushButton("⬇️")
+        self.bouton_gauche = QPushButton("⬅️")
         self.bouton_droite = QPushButton("➡️")
         self.bouton_haut = QPushButton("⬆️")
         self.bouton_bas = QPushButton("⬇️")
@@ -210,6 +210,24 @@ class Plan(QWidget):
     def connecter_signal_matrice(self, signal_externe):
         # Connecte un signal externe (qui émet une matrice) à l'entrée de l'image_widget
         signal_externe.connect(self.image_widget.matrice_a_appliquer)
+
+    def set_image(self, chemin):
+        """Charge une image et met à jour l'affichage (utilisé par le contrôleur)."""
+        self.chemin_image = chemin
+        self.image_widget.charger_image(chemin)
+        self.mettre_a_jour_affichage()
+        self.repaint()  # Ajout : force la mise à jour graphique
+
+    def set_taille_grille(self, taille):
+        """Permet de mettre à jour la valeur du slider et la taille de la grille depuis le contrôleur."""
+        # Déconnecte temporairement le signal pour éviter double appel
+        try:
+            self.slider_grille.valueChanged.disconnect()
+        except Exception:
+            pass
+        self.slider_grille.setValue(taille)
+        self.image_widget.setTailleGrille(taille)
+        self.slider_grille.valueChanged.connect(self.image_widget.setTailleGrille)
 
 # Programme principal : test de la vue ---------------------------------------
 if __name__ == "__main__":

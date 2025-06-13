@@ -7,6 +7,8 @@
 #         MINNEBO Valentin (TPA)
 
 from PyQt6.QtWidgets import QApplication
+import os
+from PyQt6.QtGui import QFontDatabase
 import sys, controleur
 
 # --- main ---
@@ -17,6 +19,7 @@ if __name__ == "__main__":
     # Création d'une QApplication
     app = QApplication(sys.argv)
     
+
     # Création du Contrôleur :
     controleur_instance = controleur.Controleur()
 

@@ -9,7 +9,8 @@
 import sys
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QApplication,
-    QHBoxLayout, QPushButton, QMessageBox  # Ajout QMessageBox
+    QHBoxLayout, QPushButton, QMessageBox,
+    QScrollArea, QFrame
 )
 from PyQt6.QtCore import pyqtSignal
 
@@ -17,7 +18,7 @@ from PyQt6.QtCore import pyqtSignal
 # --- class Partie Basse Droite
 # -----------------------------------------------------------------------------
 
-class ContenuCase(QWidget):
+class ListeProduitCase(QWidget):
 
     # Signal émettant la liste des produits restants après suppression
 
@@ -49,10 +50,17 @@ class ContenuCase(QWidget):
 
         mainLayout.addLayout(headerLayout)
 
-        self.layoutProduits = QVBoxLayout()
-        mainLayout.addLayout(self.layoutProduits)
+        # Ajout du QScrollArea pour la liste des produits
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setMinimumHeight(320)  # Hauteur minimale légèrement réduite
+        self.scrollContent = QWidget()
+        self.layoutProduits = QVBoxLayout(self.scrollContent)
+        self.scroll.setWidget(self.scrollContent)
+        mainLayout.addWidget(self.scroll, stretch=1)  # Prend tout l'espace restant
 
-        mainLayout.addStretch()
+        # mainLayout.addStretch()  # <-- Toujours supprimé
+
         self.setLayout(mainLayout)
         
     def miseAJourCase(self, nomCase):
@@ -96,6 +104,7 @@ class ContenuCase(QWidget):
     def ajouterLigneProduit(self, nomProduit: str):
         ligne = QHBoxLayout()
         label = QLabel(f"•  {nomProduit}")
+        label.setObjectName("produits")
         bouton = QPushButton("❌")
         bouton.setFixedWidth(30)
 
@@ -166,7 +175,7 @@ class ContenuCase(QWidget):
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
-    fenetre = ContenuCase()
+    fenetre = ListeProduitCase()
 
     fenetre.show()
     sys.exit(app.exec())

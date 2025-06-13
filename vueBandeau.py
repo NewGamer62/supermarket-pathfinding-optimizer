@@ -8,11 +8,12 @@
 
 import sys
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QMenuBar, QMenu, QLabel, QWidget, QVBoxLayout,
+    QApplication, QMainWindow, QMenuBar, QMenu,
     QMessageBox, QFileDialog
 )
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtCore import Qt, QUrl, pyqtSignal
+import os
 
 
 # ---------------------------------------------------------------------------
@@ -43,8 +44,8 @@ class Bandeau(QMainWindow):
         affichageMenu = QMenu("Affichage", self)
 
         menuBar.addMenu(fichierMenu)
-        menuBar.addMenu(creditMenu)
         menuBar.addMenu(affichageMenu)
+        menuBar.addMenu(creditMenu)
 
         # --- Actions pour "Fichier" ---
         ouvrirAction = QAction("📂 Ouvrir", self)
@@ -67,12 +68,29 @@ class Bandeau(QMainWindow):
         faire_don = QAction("💰️ Faire un don", self)
         faire_don.triggered.connect(self.don)
         creditMenu.addAction(faire_don)
+        
+        # --- Actions pour le style clair/sombre ---
+        self.action_style_clair = QAction("🌞 Style clair", self)
+        self.action_style_clair.setCheckable(True)
+        self.action_style_sombre = QAction("🌙 Style sombre", self)
+        self.action_style_sombre.setCheckable(True)
 
         # --- Action "Plein écran" ---
         self.action_fullscreen = QAction("🖥️ Plein écran", self)
         self.action_fullscreen.setCheckable(True)
         self.action_fullscreen.triggered.connect(self.demanderPleinEcran)
-        affichageMenu.addAction(self.action_fullscreen)
+        affichageMenu.addAction(self.action_fullscreen)        
+
+        # Groupe exclusif pour les styles
+        self.action_style_clair.setChecked(True)  # Par défaut
+        self.action_style_clair.triggered.connect(lambda: self.appliquerStyle("Clair"))
+        self.action_style_sombre.triggered.connect(lambda: self.appliquerStyle("Sombre"))
+
+        affichageMenu.addAction(self.action_style_clair)
+        affichageMenu.addAction(self.action_style_sombre)
+
+        # Appliquer le style clair au démarrage
+        self.appliquerStyle("Clair")
 
     # --- Méthode pour ouvrir un dossier ---
     def ouvrirDossier(self):
@@ -91,7 +109,7 @@ class Bandeau(QMainWindow):
 
     # --- Méthode pour "Enregistrer sous" ---
     def enregistrerSous(self):
-        chemin, _ = QFileDialog.getSaveFileName(self, "Enregistrer sous", "", "Tous les fichiers (*)")
+        chemin = QFileDialog.getExistingDirectory(self, "Enregistrer dans un dossier", "")
         if chemin:
             print(f"[DEBUG] Enregistrer sous : {chemin}")
             self.cheminFichierActuel = chemin
@@ -122,6 +140,23 @@ class Bandeau(QMainWindow):
     # --- Méthode pour ouvrir le lien de don ---
     def don(self):
         QDesktopServices.openUrl(QUrl("https://www.paypal.com/donate/?hosted_button_id=FLBDLPX25CVYE"))
+
+    def appliquerStyle(self, style_nom):
+        #Applique le style clair ou sombre à l'application.
+        if style_nom == "Clair":
+            self.action_style_clair.setChecked(True)
+            self.action_style_sombre.setChecked(False)
+        else:
+            self.action_style_clair.setChecked(False)
+            self.action_style_sombre.setChecked(True)
+
+        qss_path = os.path.join(os.path.dirname(__file__), "style", f"{style_nom}.qss")
+        if os.path.exists(qss_path):
+            with open(qss_path, "r", encoding="utf-8") as f:
+                qss = f.read()
+                QApplication.instance().setStyleSheet(qss)
+        else:
+            QApplication.instance().setStyleSheet("")
 
 
 # ---------------------------------------------------------------------------
