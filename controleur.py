@@ -7,6 +7,7 @@
 #         MINNEBO Valentin (TPA)
 
 import modele, vue
+from datetime import datetime
 
 #=====================================
 #== Classe Controleur :
@@ -32,32 +33,72 @@ class Controleur:
         self.vue.matrice_generee.connect(self.modele.supermarche.setQuadrillage)
         # Synchronisation initiale
         self.synchroniser_vue_modele()
+        
+    #==========================
+    #== Méthodes :
+    #==========================
 
     def ouvrirFichier(self, chemin: str) -> None:
-        '''
-        Modifier
-        '''
         self.modele = modele.Projet(chemin)
         self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
-        self.synchroniser_vue_modele()
+        # Synchroniser la taille de la grille à partir du modèle (lecture de la matrice)
+        quadrillage = self.modele.supermarche.getQuadrillage()
+        taille_grille = 80  # Valeur par défaut si la matrice est vide
+        min_slider = self.vue.plan.slider_grille.minimum() if hasattr(self.vue.plan, "slider_grille") else 20
+        max_slider = self.vue.plan.slider_grille.maximum() if hasattr(self.vue.plan, "slider_grille") else 500
+        if quadrillage and len(quadrillage) > 0 and len(quadrillage[0]) > 0:
+            largeur_image = self.vue.plan.image_widget.image.width()
+            nb_colonnes = len(quadrillage[0])
+            if nb_colonnes > 0:
+                taille_grille = max(min_slider, min(int(largeur_image / nb_colonnes), max_slider))
+        if hasattr(self.vue.plan, "set_taille_grille"):
+            self.vue.plan.set_taille_grille(taille_grille)
+        # Synchroniser les infos à droite
+        if hasattr(self.vue.informations, "setInfos"):
+            self.vue.informations.setInfos(self.modele.informations.getInfos())
+        # Charger l'image du dossier si elle existe
+        self.charger_image_depuis_dossier(chemin)
 
     def synchroniser_vue_modele(self):
         # Synchronise les infos et la liste des produits du modèle vers la vue
         infos = self.modele.informations.getInfos()
-        #à mettre dans la vue (plan->image chemin et infos) !!!
-        
+        if hasattr(self.vue.informations, "setInfos"):
+            self.vue.informations.setInfos(infos)
+        # Synchronise la matrice du plan
+        if hasattr(self.vue.plan.image_widget, "matrice_a_appliquer"):
+            self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
+        # Synchronise l'image si besoin (optionnel, à appeler si nécessaire)
+
+    def charger_image_depuis_dossier(self, dossier):
+        #Cherche une image dans le dossier supermarche et la charge dans la vue si trouvée.
+        import os
+        dossier_supermarche = os.path.join(dossier, "supermarche")
+        if not os.path.exists(dossier_supermarche):
+            return
+        for nom in ["plan.png", "plan.jpg", "plan.jpeg"]:
+            chemin_image = os.path.join(dossier_supermarche, nom)
+            if os.path.exists(chemin_image):
+                if hasattr(self.vue.plan, "set_image"):
+                    self.vue.plan.set_image(chemin_image)
+                break
 
     def enregistrerFichier(self, chemin: str) -> None:
-        '''
-        Modifier
-        '''
         # Synchronise les infos et produits de la vue vers le modèle avant sauvegarde
         if hasattr(self.vue.informations, "getInfos"):
             infos = self.vue.informations.getInfos()
+            # Conversion de la date si besoin
+            date_creation = infos['date création']
+            if isinstance(date_creation, str):
+                try:
+                    # Essaye de parser la date au format français
+                    date_creation = datetime.strptime(date_creation, "%d/%m/%Y").date()
+                except Exception:
+                    # Sinon, laisse la chaîne telle quelle (le modèle lèvera une erreur si ce n'est pas une date)
+                    pass
             self.modele.informations.setInfos(
                 infos['nom'],
                 infos['auteur'],
-                infos['date création'],
+                date_creation,
                 infos['nom supermarché'],
                 infos['adresse supermarché'],
             )
@@ -67,9 +108,6 @@ class Controleur:
         self.modele.ecrireDossier(chemin)
 
     def changementCase(self, x: int, y: int, contenu : list) -> None:
-        '''
-        Modifier
-        '''
         # Vérifie et agrandit le quadrillage si besoin avant modification
         quadrillage = self.modele.supermarche.getQuadrillage()
         hauteur = len(quadrillage)
@@ -85,9 +123,6 @@ class Controleur:
         self.modele.supermarche.setCase(x, y, contenu)
 
     def changementInfos(self, infos: dict) -> None:
-        '''
-        Modifier
-        '''
         self.modele.informations.setInfos(
             infos['nom'],
             infos['auteur'],

@@ -109,7 +109,7 @@ class Bandeau(QMainWindow):
 
     # --- Méthode pour "Enregistrer sous" ---
     def enregistrerSous(self):
-        chemin, _ = QFileDialog.getSaveFileName(self, "Enregistrer sous", "", "Tous les fichiers (*)")
+        chemin = QFileDialog.getExistingDirectory(self, "Enregistrer dans un dossier", "")
         if chemin:
             print(f"[DEBUG] Enregistrer sous : {chemin}")
             self.cheminFichierActuel = chemin
