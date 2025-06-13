@@ -9,10 +9,7 @@
 import sys
 import json
 from pathlib import Path
-from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout,
-    QFileDialog, QTextEdit, QMessageBox, QSizePolicy, QScrollArea
-)
+from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout,QFileDialog, QTextEdit, QMessageBox, QSizePolicy, QScrollArea)
 from PyQt6.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QPixmap, QPainter, QPen
 
@@ -22,7 +19,7 @@ from PyQt6.QtGui import QPixmap, QPainter, QPen
 # -----------------------------------------------------------------------------
 
 class ClientApp(QWidget):
-    signalProduitsDemandes = pyqtSignal(list)
+    signalGeneratePath = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
@@ -30,6 +27,7 @@ class ClientApp(QWidget):
         self.setGeometry(100, 100, 1200, 700)
         self.setAcceptDrops(True)
         self.zoomFactor = 1.0
+        self.chemin = []
         self.originalPixmap = None
         self.lastMousePos = None
         self.cases = []
@@ -51,7 +49,7 @@ class ClientApp(QWidget):
         self.loadMapButton.clicked.connect(self.loadProject)
 
         self.changeMapButton = QPushButton("🔁 Changer de carte")
-        self.changeMapButton.clicked.connect(self.loadMap)
+        self.changeMapButton.clicked.connect(self.loadProject)
         self.changeMapButton.setVisible(False)
 
         self.saveMapButton = QPushButton("💾 Enregistrer la carte")
@@ -97,14 +95,6 @@ class ClientApp(QWidget):
 
         self.generatePathButton = QPushButton("🚀 Générer le chemin")
         self.generatePathButton.clicked.connect(self.sendShoppingList)
-        self.generatePathButton.clicked.connect(lambda: self.updateChemin([
-    (0, 0), (1, 1), (2, 0), (3, 0), (4, 1), (5, 2), (4, 1),
-    (3, 2), (2, 3), (1, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9),
-    (0, 8), (1, 7), (2, 6), (3, 5), (4, 4), (5, 3), (6, 2), (7, 3),
-    (8, 4), (9, 5), (8, 4), (7, 3), (6, 2), (5, 1), (4, 0), (3, 0),
-    (2, 0), (1, 0)
-]))
-
 
         rightLayout = QVBoxLayout()
         rightLayout.addWidget(self.shoppingListEdit)
@@ -119,11 +109,6 @@ class ClientApp(QWidget):
         mainLayout.addLayout(mapLayout, stretch=3)
         mainLayout.addLayout(rightLayout, stretch=2)
         self.setLayout(mainLayout)
-
-    def loadMap(self):
-        filePath, _ = QFileDialog.getOpenFileName(self, "Ouvrir une carte", "", "Images (*.png *.jpg *.bmp)")
-        if filePath:
-            self.setMap(filePath)
 
     def saveMap(self):
         filePath, _ = QFileDialog.getSaveFileName(self, "Enregistrer la carte", "", "Images (*.png *.jpg *.bmp)")
@@ -192,6 +177,9 @@ class ClientApp(QWidget):
 
             self.imageLabel.setPixmap(pixmap)
             self.imageLabel.resize(pixmap.size())
+    def tracer_chemin(self, chemin):
+        self.chemin = chemin
+        self.updateMapDisplay()
 
     def zoomIn(self):
         if self.zoomFactor < 3.0:
@@ -213,10 +201,10 @@ class ClientApp(QWidget):
         text = self.shoppingListEdit.toPlainText()
         liste = [item.strip() for item in text.strip().splitlines() if item.strip()]
         print("🛒 Produits demandés :", liste)
-        self.signalProduitsDemandes.emit(liste)
+        self.signalGeneratePath.emit(liste)
 
     @pyqtSlot(str)
-    def updateMissingItems(self, items: str):
+    def updateMissingItems(self, items: list[str]):
         self.missingItemsBox.setText(items)
 
     @pyqtSlot(list)
