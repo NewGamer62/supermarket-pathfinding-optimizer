@@ -6,12 +6,22 @@
 #         GAILLARD Noa (TPC)
 #         MINNEBO Valentin (TPA)
 
+# --------------- #
+# --- Modules --- #
+# --------------- #
+
 import sys
 from PyQt6.QtWidgets import QApplication
 import controApp2
 
-if __name__ == "__main__":
+# ------------ #
+# --- Main --- #
+# ------------ #
+
+if __name__ == "__main__" :
+    
+    """Lance l'application n°2"""
+    
     app = QApplication(sys.argv)
     controleur_instance = controApp2.Controleur()
-    controleur_instance.vue.show()
     sys.exit(app.exec())

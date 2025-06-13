@@ -6,51 +6,70 @@
 #         GAILLARD Noa (TPC)
 #         MINNEBO Valentin (TPA)
 
-import modeleSupermarche as modele
+# --------------- #
+# --- Modules --- #
+# --------------- #
+
+from modele import Projet
 import vueApp2 as vue
 from PyQt6.QtCore import QObject
 
-class Controleur(QObject):
-    def __init__(self):
-        super().__init__()
+# --------------- #
+# --- Classes --- #
+# --------------- #
+
+class Controleur(QObject) :
+    
+    """Contrôleur de l'application n°2."""
+    
+    # --- Constructeur --- #
+    
+    def __init__(self) :
         
-        self.modele = modele.Supermarche()
+        """Instancie l'application"""
+        
+        # Instanciation
+        super().__init__()
+        self.modele = Projet()
         self.vue = vue.ClientApp()
-        self.vue.signalGeneratePath.connect(lambda produits: self.setListeProduits(produits))
-
+        
+        # Connexions signaux
+        self.vue.signalGeneratePath.connect(self.genererCheminDepuisListe)
+        self.vue.signalGetFolder.connect(self.chargerSupermarcheDepuisDossier)
+        
+        # Affichage
         self.vue.show()
+        
+    # --- Manipulation fichiers --- #
 
-    def chargerSupermarcheDepuisDossier(self, chemin: str):
-        try:
-            self.modele = modele.Supermarche(chemin)
-            quadrillage = self.modele.getQuadrillage()
-            self.vue.planWidget.image_widget.matrice_a_appliquer(quadrillage)
-            self.vue.planWidget.image_widget.charger_image(self.modele.getPlan())
-            self.vue.boutonEnregistrer.setVisible(True)
-        except Exception as e:
-            print(f"Erreur chargement dossier: {e}")
+    def chargerSupermarcheDepuisDossier(self, chemin: str) :
+        
+        """Permet de charger un projet déjà existant dans l'application.\n
+Paramètres : 
+    - chemin : str -> Chemin du dossier à charger"""
+        
+        try :
+            self.modele = Projet(chemin)
+            self.vue.setMap(chemin + "/supermarche/plan.jpg")
+            
+        except Exception as e : print(f"Erreur chargement dossier: {e}")
+        
+    # --- Autres méthodes --- #
 
-    def genererCheminDepuisListe(self, liste_texte: str):
-        # Extraction et nettoyage des produits depuis QTextEdit
-        listeProduits = [produit.strip() for produit in liste_texte.split('\n') if produit.strip()]
+    def genererCheminDepuisListe(self, liste : list) :
+        
+        """Génère le chemin optimal pour récupérer différents produits dans le supermarché puis affiche ce chemin dans l'application.
+Affiche également les produits de la liste de courses impossibles à obtenir.\n
+Paramètres :
+    - liste : list -> liste de produits à récupérer dans le supermarché."""
 
-        if not listeProduits:
-            print("Aucun produit à chercher")
-            return
+        if self.modele.supermarche.getEntrees() :
 
-        # Recherche chemin optimal + produits introuvables
-        entrees = self.modele.getEntrees()
-        if not entrees:
-            print("Aucune entrée définie")
-            return
-
-        entree = entrees[0]
-        chemin = self.modele.genererChemin(entree[0], entree[1], listeProduits)
-        produitsInaccessibles = self.modele.chercherProduitsInaccessibles(entree[0], entree[1], listeProduits)
-
-        # Envoi signaux vers la vue
-        self.vue.missingItemsBox(produitsInaccessibles)
-
-    def setListeProduits(self, produits):
-        self.listeProduits = produits
-        print("Liste enregistré")
+            entreePrincipale = self.modele.supermarche.getEntrees()[0]
+            
+            # Affichage produits impossibles à obtenir
+            self.vue.missingItemsBox.setText("-".join(self.modele.supermarche.chercherProduitsInaccessibles(entreePrincipale[0], entreePrincipale[1], liste)))
+            
+            # Génération + affichage chemin
+            if (liste and not self.modele.supermarche.chercherProduitsAccessibles(entreePrincipale[0], entreePrincipale[1], liste) == []) :
+                chemin = self.modele.supermarche.genererChemin(entreePrincipale[0], entreePrincipale[1], liste) ; self.vue.updateChemin(chemin)
