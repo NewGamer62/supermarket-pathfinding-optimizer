@@ -80,6 +80,9 @@ class Controleur:
     def enregistrerFichier(self, chemin: str) -> None:
         # Synchronise les infos et produits de la vue vers le modèle avant sauvegarde
         infos = self.vue.informations.getInfos()
+        # Synchroniser la matrice de la vue vers le modèle (ajouté)
+        matrice_vue = self.vue.plan.image_widget.generer_matrice()
+        self.modele.supermarche.setQuadrillage(matrice_vue)
         # Conversion de la date si besoin
         date_creation = infos['date création']
         if isinstance(date_creation, str):
@@ -96,8 +99,6 @@ class Controleur:
             infos['nom supermarché'],
             infos['adresse supermarché'],
         )
-        produits = self.vue.listeProduits.getProduits()
-        self.modele.supermarche.setListeProduits(produits)
         self.modele.ecrireDossier(chemin)
 
     def changementCase(self, x: int, y: int, contenu : list) -> None:
@@ -112,8 +113,8 @@ class Controleur:
         # Après agrandissement éventuel, on peut modifier la case
         self.modele.supermarche.setCase(x, y, contenu)
         
-        if not contenu in ["entrée", "caisse", "mur", "sol", ""] : 
-            self.modele.supermarche.ajouterProduit(contenu)
+        if not contenu in ["entrée", "caisse", "mur", "sol", ""] and contenu != []: 
+            self.modele.supermarche.ajouterProduit(contenu[0])
         elif contenu == "" :
             self.modele.supermarche.setListeProduits([])
 

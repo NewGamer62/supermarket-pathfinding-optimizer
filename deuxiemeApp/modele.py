@@ -20,6 +20,16 @@ from modeleInformations import Informations
 
 class Projet() :
     
+    """Un projet complet. Cette classe comprend :\n
+    - informations : Informations -> les informations générales du projet
+    - supermarche : Supermarche -> le supermarché utilisé par le projet\n
+    En plus de la manipulation directe des informations et du supermarché du projet, l'utilisateur peut :
+        - Lire un projet à partir d'un dossier*
+        - Enregistrer le projet dans un dossier*
+    * -> -> Le dossier en question a pour syntaxe :
+        - informations.json -> les informations générales du projet
+        - supermarche -> un dossier comportant les informations sur le supermarché du projet (voir classe Supermarche)"""
+    
     # --- Constructeur --- #
     
     def __init__(self, nomDossier : str = None) :
@@ -30,10 +40,11 @@ Sinon, les informations sont initialisées par défaut par défaut (voir chacune
 
         assert(isinstance(nomDossier, (str|None))), "Le chemin du dossier à lire doit être une chaine de caractères ou ne doit pas avoir de valeur"
         
+        # Valeurs par défaut
         self.informations = Informations()
         self.supermarche = Supermarche()
         
-        if (nomDossier) : self.lireDossier(nomDossier)
+        if (nomDossier) : self.lireDossier(nomDossier) # Dossier fourni : lecture dossier
         
     # --- Manipulation fichiers --- #
     
@@ -75,9 +86,3 @@ Paramètres :
 if __name__ == "__main__" :
     
     test = Projet()
-    test.ecrireDossier("test")
-    test2 = Projet()
-    test2.informations.setNom("TEST REUSSI")
-    test2.ecrireDossier("test1")
-    test.lireDossier("test1")
-    print(test.informations.getNom())

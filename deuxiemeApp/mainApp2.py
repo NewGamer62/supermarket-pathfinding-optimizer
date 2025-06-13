@@ -6,25 +6,12 @@
 #         GAILLARD Noa (TPC)
 #         MINNEBO Valentin (TPA)
 
+import sys
 from PyQt6.QtWidgets import QApplication
-import os
-from PyQt6.QtGui import QFontDatabase
-import sys, controleur
+import controApp2
 
-# --- main ---
 if __name__ == "__main__":
-
-    print('\n--- main ---\n')
-
-    # Création d'une QApplication
     app = QApplication(sys.argv)
-    
-
-    # Création du Contrôleur :
-    controleur_instance = controleur.Controleur()
-
-    # Affichage de la Vue du Contrôleur
+    controleur_instance = controApp2.Controleur()
     controleur_instance.vue.show()
-    
-    # lancement de l'application  
     sys.exit(app.exec())

@@ -6,12 +6,23 @@
 #         GAILLARD Noa (TPC)
 #         MINNEBO Valentin (TPA)
 
-import sys
 from PyQt6.QtWidgets import QApplication
-from controapp2 import Controleur  # Assure-toi que ce nom correspond au bon fichier "controleur.py"
+import sys, controleur
 
+# --- main ---
 if __name__ == "__main__":
+
+    print('\n--- main ---\n')
+
+    # Création d'une QApplication
     app = QApplication(sys.argv)
-    controleur_instance = Controleur()
+    
+
+    # Création du Contrôleur :
+    controleur_instance = controleur.Controleur()
+
+    # Affichage de la Vue du Contrôleur
     controleur_instance.vue.show()
+    
+    # lancement de l'application  
     sys.exit(app.exec())
