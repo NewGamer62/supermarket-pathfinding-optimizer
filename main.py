@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Création d'une QApplication
     app = QApplication(sys.argv)
-    
+
     # Création du Contrôleur :
     controleur_instance = controleur.Controleur()
 

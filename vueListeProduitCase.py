@@ -96,6 +96,7 @@ class ContenuCase(QWidget):
     def ajouterLigneProduit(self, nomProduit: str):
         ligne = QHBoxLayout()
         label = QLabel(f"•  {nomProduit}")
+        label.setObjectName("produits")
         bouton = QPushButton("❌")
         bouton.setFixedWidth(30)
 

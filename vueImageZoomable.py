@@ -19,6 +19,7 @@ class ImageZoomable(QLabel):
     
     matrice_generee = pyqtSignal(list)  # Signal sortant : transmet la matrice actuelle
     produits_case_selectionnee = pyqtSignal(list)  # Signal pour transmettre la liste des produits de la case sélectionnée
+    produit_pose = pyqtSignal()  # Ajout du signal
 
     def __init__(self, chemin, taille_grille=80, grille_x=0, grille_y=0):
         # Initialisation de la classe
@@ -328,6 +329,9 @@ class ImageZoomable(QLabel):
             self._derniere_case = cellule  # Mémorise la dernière case sélectionnée
             if self.type_case_actuel in (None, "", "mur", "caisse", "entree"):
                 if self.type_case_actuel in ("mur", "caisse", "entree"):
+                    # Empêcher de poser mur/caisse/entrée sur une case contenant au moins un produit
+                    if cellule in self.cases_produits and self.cases_produits[cellule]:
+                        return  # Ne rien faire si la case contient déjà un produit
                     self.changer_type_case(cellule, self.type_case_actuel)
                 else:
                     # Toujours émettre une liste (même vide) pour le signal
@@ -335,6 +339,9 @@ class ImageZoomable(QLabel):
                     self.produits_case_selectionnee.emit(produits)
                     self.update()
             else:
+                # Empêcher d'ajouter un produit sur une case mur, caisse ou entrée
+                if cellule in self.cases_mur or cellule in self.cases_caisse or cellule in self.cases_entree:
+                    return  # Ne rien faire si la case est un mur, une caisse ou une entrée
                 if cellule not in self.cases_produits:
                     self.cases_produits[cellule] = []
                 # Ajout sans doublon
@@ -344,6 +351,7 @@ class ImageZoomable(QLabel):
                 self.update()
                 self.emettre_matrice()
                 self.type_case_actuel = ""
+                self.produit_pose.emit()  # Signale que le produit a été posé
 
     def supprimer_cellule(self, event):
         # Supprime une cellule de n'importe quel type en fonction de la position de l'événement de souris de Qt
@@ -363,6 +371,9 @@ class ImageZoomable(QLabel):
         # Vérifie que la position est valide avant de supprimer la cellule :
         if (x - decalage_x) >= 0 and (y - decalage_y) >= 0:
             cellule = (col, ligne)
+            # Empêcher la suppression si la case contient des produits
+            if cellule in self.cases_produits and self.cases_produits[cellule]:
+                return  # Ne rien faire si la case contient au moins un produit
             self.cases_mur.discard(cellule)
             self.cases_caisse.discard(cellule)
             self.cases_entree.discard(cellule)

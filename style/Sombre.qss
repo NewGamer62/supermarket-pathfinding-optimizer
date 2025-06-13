@@ -1,153 +1,114 @@
-"files.associations": {
-    "*.qss": "css"
+QWidget {
+    background-color: #000000;
 }
-
 
 /* -----------[ BANDEAU !! ]----------- */
 
 QMenuBar {
-    background-color : #505050;
+    font-family: "Nunito";
+    font-size: 14px;
+    background-color: #444444;
+}
+
+QMenuBar::item:selected, QMenuBar::item:hover {
+    background-color: #3399FF;
+    color: #FFFFFF;
 }
 
 QMenu {
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
+    font-family: "Nunito";
+    font-size: 14px;
+    background-color: #444444;
+    color: #FFFFFF;
 }
 
-/* MAYBE A FAIRE MAIS MAYBE NON !! Noa a dit que c'était okay sans style
-QAction {
-
+QMenu::item:selected, QMenu::item:hover {
+    background-color: #3399FF;
+    color: #FFFFFF;
 }
-*/
+
 
 /* Sert aussi dans plan.py */
 QMessageBox {
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
-}
-
-/* -----------[ ELEMENTS MAGASIN!! ]----------- */
-
-QPushButton#mur {
-    background-color : #2E2E2E;
-    border : 1px solid #FFFFFF;
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
-}
-
-QPushButton#mur : hover {
-    background-color : #4A4A4A;
-    color : #C8C8C8;
-    border : 1.5px solid #FFFFFF;
-}
-
-QPushButton#caisse {
-    background-color : #992929;
-    border : 1px solid #000000;
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
-}
-
-QPushButton#caisse : hover {
-    background-color : #CC3C3C;
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
-}
-
-QPushButton#entree {
-    background-color : #81E8FF;
-    border : 1px solid #000000;
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
-}
-
-QPushButton#entree : hover {
-    background-color : #52BBD9;
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
+    font-family: "Nunito";
+    font-size: 14px;
 }
 
 /* -----------[ INFORMATIONS !! ]----------- */
 
 /* Sert aussi dans listeProduitCase.py */
 QLabel {
-    font-family : "Nunito";
-    font-size : 18px;
-    color : #FFFFFF;
+    font-family: "Nunito";
+    font-size: 18px;
+    color: #FFFFFF;
+    
 }
 
-QLineEditParDefaut {
-    font-family : "Nunito";
-    font-size : 18px;
-    color : #FFFFFF;
+QLabel#produits {
+    font-size: 14px;
+    color: #FFFFFF;
 }
 
-/* Sert aussi dans listeProduitCase.py (fermer) et plan.py (-)*/
-QPushButton#fermer {
-    background-color : #FF9A9A;
-    border : 1px solid #000000;
-    color : #FFFFFF;
-}
-
-QPushButton#fermer : hover {
-    background-color : #D47474;
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
+QLineEdit {
+    font-family: "Nunito";
+    font-size: 14px;
+    color: #FFFFFF;
+    text-transform: normal;
 }
 
 /* -----------[ PLAN !! ]----------- */
 
 QPushButton#image {
-    background-color : #ffffff;
-    border : 1px solid #000000;
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
+    background-color: #000000;
+    border: 1px solid #FFFFFF;
+    font-family: "Nunito";
+    font-size: 14px;
+    color: #FFFFFF;
 }
 
-QPushButton#image : hover {
-    background-color : #e0e0e0;
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
-}
-
-QPushButton#plus {
-    background-color : #C0FF9E
-    border : 1px solid #000000;
-    color : #FFFFFF;
-}
-
-QPushButton#plus : hover {
-    background-color : #98D97F
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
+QPushButton#image:hover {
+    background-color: #1f1f1f;
+    color: #d4d4d4;
+    border: 1.5px solid #FFFFFF;
 }
 
 /* Les QPushButton basiques sont utilisés pour chaque flèche directionnelle */
 
 QPushButton {
-    background-color : #ffffff;
-    border : 1px solid #000000;
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
+    background-color: #000000;
+    border: 1px solid #FFFFFF;
+    font-family: "Nunito";
+    font-size: 14px;
+    color: #FFFFFF;
+    padding: 3px 5px;
 }
 
-QPushButton : hover {
-    background-color : #e0e0e0;
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
+QPushButton:hover {
+    background-color: #1f1f1f;
+    color: #d4d4d4;
+    border: 1.5px solid #FFFFFF;
 }
 
-QPushButton : pressed {
+QPushButton:pressed {
     background-color: #B0B0B0;
     padding-top: -15px;
     padding-bottom: -17px;
+}
+
+QSlider::groove:horizontal {
+    border: 1px solid #bbb;
+    background: #4f4f4f; 
+    height: 6px;
+    border-radius: 3px;
+    margin: 0 8px;
+}
+
+QSlider::sub-page:horizontal {
+    border: 1px solid #444444;
+    background: #3399FF; 
+    height: 6px;
+    border-radius: 3px;
+    margin: 0 8px;
 }
 
 QSlider::handle:horizontal {
@@ -157,20 +118,14 @@ QSlider::handle:horizontal {
     border-radius: 2px; 
     margin: -4px 0;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+    background-color: #2b2b2b;
 }
 
-/* -----------[ A GARDER POUR L'INSTANT !! ]----------- */
 
-QPushButton {
-    background-color : #ffffff;
-    border : 1px solid #000000;
-    font-family : "Nunito";
-    font-size : 14px;
-    color : #FFFFFF;
-}
 
-QPushButton : hover {
-    background-color : #e0e0e0;
-    color : #2b2b2b;
-    border : 1.5px solid #000000;
+/* -----------[ Pop up !! ]----------- */
+
+QMessageBox QPushButton {
+    padding: 4px 12px;
+    margin: 0 6px;
 }

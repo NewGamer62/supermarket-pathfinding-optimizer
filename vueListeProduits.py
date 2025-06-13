@@ -30,7 +30,7 @@ class ListeProduits(QWidget):
     def initUI(self):
         self.layoutPrincipal = QVBoxLayout(self)
 
-        self.boutonOuvrir = QPushButton("Chercher dans mes fichiers")
+        self.boutonOuvrir = QPushButton("Ouvrir liste de produits")
         self.boutonOuvrir.clicked.connect(self.ouvrirFichier)
         self.layoutPrincipal.addWidget(self.boutonOuvrir, alignment=Qt.AlignmentFlag.AlignCenter)
 
@@ -128,20 +128,18 @@ class ListeProduits(QWidget):
             if not deja_selectionne:
                 boutonClique.setChecked(True)
                 boutonClique.setStyleSheet("""
-                    background-color: #ADD8E6;
+                    background-color: #3399FF;
                     font-weight: bold;
                     text-align: left;
                 """)
                 boutonClique.setProperty("selectionne", True)
                 self.signalProduitSelectionne.emit(nom)
+                # Ne pas désélectionner ici : la vue principale le fera après la pose
             else:
-                # Déselection : n'émet rien ou émet une valeur spéciale si besoin
                 boutonClique.setProperty("selectionne", False)
-                # self.signalProduitSelectionne.emit("")  # Décommenter si besoin d'un signal sur déselection
         else:
             boutonClique.setProperty("selectionne", False)
             boutonClique.setStyleSheet("text-align: left;")
-            # self.signalProduitSelectionne.emit("")  # Décommenter si besoin d'un signal sur déselection
 
     def confirmerSuppression(self):
         # Demande de confirmation avant de supprimer la liste

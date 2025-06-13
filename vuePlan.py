@@ -62,7 +62,7 @@ class Plan(QWidget):
         self.slider_grille.setValue(80)
         self.slider_grille.setTickInterval(5)
         self.slider_grille.setSingleStep(1)
-        self.bouton_gauche = QPushButton("⬇️")
+        self.bouton_gauche = QPushButton("⬅️")
         self.bouton_droite = QPushButton("➡️")
         self.bouton_haut = QPushButton("⬆️")
         self.bouton_bas = QPushButton("⬇️")
