@@ -56,7 +56,7 @@ class ElementsMagasin(QWidget):
                 bouton.setStyleSheet("")
         # Met en surbrillance le bouton sélectionné
         if boutonClique.isChecked():
-            boutonClique.setStyleSheet("background-color: #ADD8E6; font-weight: bold;")
+            boutonClique.setStyleSheet("background-color: #3399FF; font-weight: bold;")
             self.signal_element.emit(type_case)
         else:
             boutonClique.setStyleSheet("")

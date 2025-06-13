@@ -5,9 +5,10 @@ QWidget {
 /* -----------[ BANDEAU !! ]----------- */
 
 QMenuBar {
-    font-family: "Nunito";
     font-size: 14px;
     background-color: #444444;
+    color: #FFFFFF;
+    font-weight: bold;
 }
 
 QMenuBar::item:selected, QMenuBar::item:hover {
@@ -16,7 +17,6 @@ QMenuBar::item:selected, QMenuBar::item:hover {
 }
 
 QMenu {
-    font-family: "Nunito";
     font-size: 14px;
     background-color: #444444;
     color: #FFFFFF;
@@ -25,12 +25,12 @@ QMenu {
 QMenu::item:selected, QMenu::item:hover {
     background-color: #3399FF;
     color: #FFFFFF;
+    font-weight: bold;
 }
 
 
 /* Sert aussi dans plan.py */
 QMessageBox {
-    font-family: "Nunito";
     font-size: 14px;
 }
 
@@ -38,10 +38,9 @@ QMessageBox {
 
 /* Sert aussi dans listeProduitCase.py */
 QLabel {
-    font-family: "Nunito";
     font-size: 18px;
     color: #FFFFFF;
-    
+    font-weight: bold;
 }
 
 QLabel#produits {
@@ -50,10 +49,10 @@ QLabel#produits {
 }
 
 QLineEdit {
-    font-family: "Nunito";
     font-size: 14px;
     color: #FFFFFF;
     text-transform: normal;
+    background-color: #444444;
 }
 
 /* -----------[ PLAN !! ]----------- */
@@ -61,7 +60,6 @@ QLineEdit {
 QPushButton#image {
     background-color: #000000;
     border: 1px solid #FFFFFF;
-    font-family: "Nunito";
     font-size: 14px;
     color: #FFFFFF;
 }
@@ -77,7 +75,6 @@ QPushButton#image:hover {
 QPushButton {
     background-color: #000000;
     border: 1px solid #FFFFFF;
-    font-family: "Nunito";
     font-size: 14px;
     color: #FFFFFF;
     padding: 3px 5px;
@@ -117,11 +114,20 @@ QSlider::handle:horizontal {
     height: 14px;
     border-radius: 2px; 
     margin: -4px 0;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
     background-color: #2b2b2b;
 }
 
+/* -----------[ LISTE PRODUITS !! ]----------- */
 
+QScrollBar::handle {
+    background-color: #2b2b2b;
+    border: 2px solid #FFFFFF;
+    border-radius: 2px;
+}
+
+QSlider::groove {
+    background: #4f4f4f;
+}
 
 /* -----------[ Pop up !! ]----------- */
 

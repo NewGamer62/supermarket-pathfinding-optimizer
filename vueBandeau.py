@@ -8,7 +8,7 @@
 
 import sys
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QMenuBar, QMenu, QLabel, QWidget, QVBoxLayout,
+    QApplication, QMainWindow, QMenuBar, QMenu,
     QMessageBox, QFileDialog
 )
 from PyQt6.QtGui import QAction, QDesktopServices
@@ -142,8 +142,7 @@ class Bandeau(QMainWindow):
         QDesktopServices.openUrl(QUrl("https://www.paypal.com/donate/?hosted_button_id=FLBDLPX25CVYE"))
 
     def appliquerStyle(self, style_nom):
-        """Applique le style clair ou sombre à l'application."""
-        # Gestion du check exclusif
+        #Applique le style clair ou sombre à l'application.
         if style_nom == "Clair":
             self.action_style_clair.setChecked(True)
             self.action_style_sombre.setChecked(False)
