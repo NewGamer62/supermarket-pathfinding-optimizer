@@ -7,19 +7,22 @@
 #         MINNEBO Valentin (TPA)
 
 import sys
+import json
+from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout,
     QFileDialog, QTextEdit, QMessageBox, QSizePolicy, QScrollArea
 )
-from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
-from PyQt6.QtGui import QPixmap, QDragEnterEvent, QDropEvent
+from PyQt6.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QPixmap, QPainter, QPen
+
 
 # -----------------------------------------------------------------------------
-# --- class Appli Client
+# --- class App2
 # -----------------------------------------------------------------------------
 
 class ClientApp(QWidget):
-    cheminGenere = pyqtSignal()
+    signalProduitsDemandes = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
@@ -28,21 +31,24 @@ class ClientApp(QWidget):
         self.setAcceptDrops(True)
         self.zoomFactor = 1.0
         self.originalPixmap = None
+        self.lastMousePos = None
+        self.cases = []
+        self.chemin = []  # stocke les coordonnées du chemin
         self.initUI()
 
     def initUI(self):
-        # Carte
         self.imageLabel = QLabel()
         self.imageLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.imageLabel.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.imageLabel.setStyleSheet("border: none;")
+        self.imageLabel.setMouseTracking(True)
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.imageLabel)
 
-        self.loadMapButton = QPushButton("🗺️ Charger une carte")
-        self.loadMapButton.clicked.connect(self.loadMap)
+        self.loadMapButton = QPushButton("📂 Charger dossier projet")
+        self.loadMapButton.clicked.connect(self.loadProject)
 
         self.changeMapButton = QPushButton("🔁 Changer de carte")
         self.changeMapButton.clicked.connect(self.loadMap)
@@ -73,11 +79,10 @@ class ClientApp(QWidget):
         mapLayout.addWidget(self.scrollArea, stretch=1)
         mapLayout.addLayout(mapButtonLayout)
 
-        # Liste de courses
         self.shoppingListEdit = QTextEdit()
         self.shoppingListEdit.setPlaceholderText("📝 Écris ou colle ta liste de courses ici")
 
-        self.loadShoppingListButton = QPushButton("📂 Charger une liste de courses")
+        self.loadShoppingListButton = QPushButton("📥 Charger une liste de courses")
         self.loadShoppingListButton.clicked.connect(self.loadShoppingList)
 
         self.clearListButton = QPushButton("🧹 Vider la liste")
@@ -91,7 +96,15 @@ class ClientApp(QWidget):
         self.missingItemsBox.setFixedHeight(80)
 
         self.generatePathButton = QPushButton("🚀 Générer le chemin")
-        self.generatePathButton.clicked.connect(self.cheminGenere.emit)
+        self.generatePathButton.clicked.connect(self.sendShoppingList)
+        self.generatePathButton.clicked.connect(lambda: self.updateChemin([
+    (0, 0), (1, 1), (2, 0), (3, 0), (4, 1), (5, 2), (4, 1),
+    (3, 2), (2, 3), (1, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9),
+    (0, 8), (1, 7), (2, 6), (3, 5), (4, 4), (5, 3), (6, 2), (7, 3),
+    (8, 4), (9, 5), (8, 4), (7, 3), (6, 2), (5, 1), (4, 0), (3, 0),
+    (2, 0), (1, 0)
+]))
+
 
         rightLayout = QVBoxLayout()
         rightLayout.addWidget(self.shoppingListEdit)
@@ -140,13 +153,45 @@ class ClientApp(QWidget):
         if self.originalPixmap:
             width = int(self.originalPixmap.width() * self.zoomFactor)
             height = int(self.originalPixmap.height() * self.zoomFactor)
-            scaled = self.originalPixmap.scaled(
-                width,
-                height,
-                Qt.AspectRatioMode.KeepAspectRatio
-            )
-            self.imageLabel.setPixmap(scaled)
-            self.imageLabel.resize(scaled.size())
+            scaled = self.originalPixmap.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
+            pixmap = QPixmap(scaled)
+
+            # Dessiner le chemin si disponible
+            if self.chemin:
+                painter = QPainter(pixmap)
+                pen = QPen(Qt.GlobalColor.red, 4)
+                painter.setPen(pen)
+                caseWidth = pixmap.width() // 10
+                caseHeight = pixmap.height() // 10
+
+
+                for i in range(len(self.chemin) - 1):
+                    x1, y1 = self.chemin[i]
+                    x2, y2 = self.chemin[i + 1]
+                    p1 = QPoint(x1 * caseWidth + caseWidth // 2, y1 * caseHeight + caseHeight // 2)
+                    p2 = QPoint(x2 * caseWidth + caseWidth // 2, y2 * caseHeight + caseHeight // 2)
+                    painter.drawLine(p1, p2)
+
+                # Affichage des points en bleu
+                for point in self.chemin:
+                    px, py = point
+                    p = QPoint(px * caseWidth + caseWidth // 2, py * caseHeight + caseHeight // 2)
+                    painter.setPen(QPen(Qt.GlobalColor.blue, 8))
+                    painter.drawPoint(p)
+
+                # Affichage des traits en rouge
+                painter.setPen(QPen(Qt.GlobalColor.red, 4))
+                for i in range(len(self.chemin) - 1):
+                    x1, y1 = self.chemin[i]
+                    x2, y2 = self.chemin[i + 1]
+                    p1 = QPoint(x1 * caseWidth + caseWidth // 2, y1 * caseHeight + caseHeight // 2)
+                    p2 = QPoint(x2 * caseWidth + caseWidth // 2, y2 * caseHeight + caseHeight // 2)
+                painter.drawLine(p1, p2)
+
+                painter.end()
+
+            self.imageLabel.setPixmap(pixmap)
+            self.imageLabel.resize(pixmap.size())
 
     def zoomIn(self):
         if self.zoomFactor < 3.0:
@@ -164,22 +209,45 @@ class ClientApp(QWidget):
             with open(filePath, 'r', encoding='utf-8') as f:
                 self.shoppingListEdit.setText(f.read())
 
+    def sendShoppingList(self):
+        text = self.shoppingListEdit.toPlainText()
+        liste = [item.strip() for item in text.strip().splitlines() if item.strip()]
+        print("🛒 Produits demandés :", liste)
+        self.signalProduitsDemandes.emit(liste)
+
     @pyqtSlot(str)
     def updateMissingItems(self, items: str):
         self.missingItemsBox.setText(items)
 
-    def dragEnterEvent(self, event: QDragEnterEvent):
-        if event.mimeData().hasUrls():
-            urls = event.mimeData().urls()
-            if any(url.toLocalFile().lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')) for url in urls):
-                event.acceptProposedAction()
+    @pyqtSlot(list)
+    def updateChemin(self, chemin: list):
+        print("🧭 Nouveau chemin reçu :", chemin)
+        self.chemin = chemin
+        self.updateMapDisplay()
 
-    def dropEvent(self, event: QDropEvent):
-        for url in event.mimeData().urls():
-            path = url.toLocalFile()
-            if path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
-                self.setMap(path)
-                break
+    def loadProject(self):
+        dir_path = QFileDialog.getExistingDirectory(self, "Choisir le dossier projet contenant supermarche/")
+        if not dir_path:
+            return
+        base = Path(dir_path)
+        plan_path = base / "supermarche" / "plan.jpg"
+        quad_path = base / "supermarche" / "quadrillage.json"
+
+        if not (plan_path.exists() and quad_path.exists()):
+            QMessageBox.warning(self, "Erreur", "Fichiers manquants : plan.jpg et quadrillage.json requis.")
+            return
+
+        self.setMap(str(plan_path))
+
+        try:
+            with open(quad_path, "r", encoding="utf-8") as f:
+                quadrillage = json.load(f)["quadrillage"]
+            self.cases = []
+            for y, row in enumerate(quadrillage):
+                for x, contenu in enumerate(row):
+                    self.cases.append({"x": x, "y": y, "contenu": contenu})
+        except Exception as e:
+            QMessageBox.warning(self, "Erreur", f"Erreur lecture quadrillage.json :\n{e}")
 
 # -----------------------------------------------------------------------------
 # --- Main
@@ -191,7 +259,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     fenetre = ClientApp()
-    fenetre.cheminGenere.connect(lambda: print("Signal: Génération de chemin déclenchée."))
     fenetre.show()
 
     sys.exit(app.exec())
