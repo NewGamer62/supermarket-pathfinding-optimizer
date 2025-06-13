@@ -57,7 +57,7 @@ class Plan(QWidget):
         self.bouton_moins = QPushButton("➖️")
         self.bouton_plus = QPushButton("➕️")
         self.slider_grille = QSlider(Qt.Orientation.Horizontal)
-        self.slider_grille.setMinimum(5)
+        self.slider_grille.setMinimum(30)  # Taille minimale
         self.slider_grille.setMaximum(500)
         self.slider_grille.setValue(80)
         self.slider_grille.setTickInterval(5)
@@ -217,6 +217,17 @@ class Plan(QWidget):
         self.image_widget.charger_image(chemin)
         self.mettre_a_jour_affichage()
         self.repaint()  # Ajout : force la mise à jour graphique
+
+    def set_taille_grille(self, taille):
+        """Permet de mettre à jour la valeur du slider et la taille de la grille depuis le contrôleur."""
+        # Déconnecte temporairement le signal pour éviter double appel
+        try:
+            self.slider_grille.valueChanged.disconnect()
+        except Exception:
+            pass
+        self.slider_grille.setValue(taille)
+        self.image_widget.setTailleGrille(taille)
+        self.slider_grille.valueChanged.connect(self.image_widget.setTailleGrille)
 
 # Programme principal : test de la vue ---------------------------------------
 if __name__ == "__main__":

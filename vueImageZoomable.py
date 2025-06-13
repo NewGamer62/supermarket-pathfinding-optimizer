@@ -57,28 +57,37 @@ class ImageZoomable(QLabel):
     #=================================
     
     def generer_matrice(self):
-        # Détermine la taille maximale de la grille utilisée
-        toutes_cases = self.cases_mur | self.cases_caisse | self.cases_entree | set(self.cases_produits.keys())
-        if not toutes_cases:
+        # Génère une matrice complète couvrant toute l'image, même pour les cases vides
+
+        # Calcule le nombre de colonnes et de lignes visibles sur l'image
+        if self.image.isNull():
             return []
-        
-        max_col = max((col for col, _ in toutes_cases), default=0)
-        max_lig = max((lig for _, lig in toutes_cases), default=0)
+
+        largeur = self.image.width()
+        hauteur = self.image.height()
+        taille_case = max(self.taille_grille, 1)
+        decalage_x = self.grille_x
+        decalage_y = self.grille_y
+
+        # On ne prend que les cases qui sont totalement ou partiellement sur l'image
+        nb_col = (largeur - decalage_x + taille_case - 1) // taille_case
+        nb_lig = (hauteur - decalage_y + taille_case - 1) // taille_case
+
         matrice = []
-        
-        for lig in range(max_lig + 1):
+        for lig in range(nb_lig):
             ligne = []
-            for col in range(max_col + 1):
+            for col in range(nb_col):
                 cellule = []
-                if (col, lig) in self.cases_mur:
+                coord = (col, lig)
+                if coord in self.cases_mur:
                     cellule.append("mur")
-                if (col, lig) in self.cases_caisse:
+                if coord in self.cases_caisse:
                     cellule.append("caisse")
-                if (col, lig) in self.cases_entree:
+                if coord in self.cases_entree:
                     cellule.append("entree")
-                if (col, lig) in self.cases_produits and self.cases_produits[(col, lig)]:
-                    cellule.extend(self.cases_produits[(col, lig)])
-                ligne.append(cellule)  # Toujours une liste de str, même vide
+                if coord in self.cases_produits and self.cases_produits[coord]:
+                    cellule.extend(self.cases_produits[coord])
+                ligne.append(cellule)
             matrice.append(ligne)
         return matrice
     
@@ -127,57 +136,25 @@ class ImageZoomable(QLabel):
         self.filtrer_cases_visibles()
         self.updateImage()
         self.emettre_matrice()
-        self.repaint()  # Ajout : force la mise à jour graphique
-
-    def vider_elt(self):
-        # Vide les ensembles de cases et met à jour l'affichage, soit les élements de la grille
-        self.cases_mur.clear()
-        self.cases_caisse.clear()
-        self.cases_entree.clear()
-        self.cases_produits.clear()
-        self.emettre_matrice()
-
-    def supprimer_image(self):
-        # Supprime l'image actuelle et vide les ensembles de cases
-        self.image = QPixmap()
-        self.vider_elt()
-        self.updateImage()
-        self.emettre_matrice()
-
-    def changer_type_case(self, case, type_case):
-        # Change le type de la case spécifiée (mur, caisse, entrée) et met à jour l'affichage
-        self.cases_mur.discard(case)
-        self.cases_caisse.discard(case)
-        self.cases_entree.discard(case)
-        if type_case == "mur":
-            self.cases_mur.add(case)
-        elif type_case == "caisse":
-            self.cases_caisse.add(case)
-        elif type_case == "entree":
-            self.cases_entree.add(case)
-        self.update()
-        self.emettre_matrice()
+        # self.repaint()  # Suppression : update() suffit
 
     def updateImage(self):
         # Met à jour l'image affichée en fonction du zoom et de la taille de la grille
-
-        # Vérifie si l'image est valide avant de la redimensionner :
         if not self.image.isNull():
-            # Redimensionne l'image en fonction du zoom et de la taille de la grille :
             scaled = self.image.scaled(
                 int(self.image.width() * self.zoom),
                 int(self.image.height() * self.zoom),
                 Qt.AspectRatioMode.KeepAspectRatio,
                 Qt.TransformationMode.SmoothTransformation
             )
-            self.setPixmap(scaled) # Définit le pixmap de l'étiquette avec l'image redimensionnée
-            self.resize(scaled.size()) # Redimensionne en correspondant à la taille de l'image
-            self.filtrer_cases_visibles()
-            self.repaint()  # Ajout : force la mise à jour graphique
+            self.setPixmap(scaled)
+            self.resize(scaled.size())
+            # self.filtrer_cases_visibles()  # Suppression : inutile à chaque zoom
+            self.update()  # update() est plus léger que repaint()
         else:
             self.clear()
             self.resize(0, 0)
-            self.repaint()  # Ajout : force la mise à jour graphique
+            self.update()
 
     def paintEvent(self, event):
         # Redessine l'image et la grille sur le QLabel automatiquement par Qt
@@ -416,9 +393,9 @@ class ImageZoomable(QLabel):
             # Calculer l'angle de la molette pour ajuster le zoom : 
             angle = event.angleDelta().y()
             if angle > 0:
-                self.zoom = min(self.zoom * 1.1, 10.0)
+                self.zoom = min(self.zoom * 1.1, 1.0)
             else:
-                self.zoom = max(self.zoom / 1.1, 0.1)
+                self.zoom = max(self.zoom / 1.1, 0.2)
             self.updateImage()
 
             new_width = self.width()
@@ -514,7 +491,35 @@ class ImageZoomable(QLabel):
         else:
             super().mouseReleaseEvent(event)
 
-    
+    def changer_type_case(self, case, type_case):
+        # Change le type de la case spécifiée (mur, caisse, entrée) et met à jour l'affichage
+        self.cases_mur.discard(case)
+        self.cases_caisse.discard(case)
+        self.cases_entree.discard(case)
+        if type_case == "mur":
+            self.cases_mur.add(case)
+        elif type_case == "caisse":
+            self.cases_caisse.add(case)
+        elif type_case == "entree":
+            self.cases_entree.add(case)
+        self.update()
+        self.emettre_matrice()
 
     def avoir_image(self):
         return not self.image.isNull()
+
+    def vider_elt(self):
+        """Vide tous les éléments de la grille (murs, caisses, entrées, produits)."""
+        self.cases_mur.clear()
+        self.cases_caisse.clear()
+        self.cases_entree.clear()
+        self.cases_produits.clear()
+        self.update()
+        self.emettre_matrice()
+
+    def supprimer_image(self):
+        """Supprime l'image actuelle et vide les ensembles de cases."""
+        self.image = QPixmap()
+        self.vider_elt()
+        self.updateImage()
+        self.emettre_matrice()
