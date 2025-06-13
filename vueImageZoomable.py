@@ -127,7 +127,8 @@ class ImageZoomable(QLabel):
         self.filtrer_cases_visibles()
         self.updateImage()
         self.emettre_matrice()
-        
+        self.repaint()  # Ajout : force la mise à jour graphique
+
     def vider_elt(self):
         # Vide les ensembles de cases et met à jour l'affichage, soit les élements de la grille
         self.cases_mur.clear()
@@ -162,7 +163,6 @@ class ImageZoomable(QLabel):
 
         # Vérifie si l'image est valide avant de la redimensionner :
         if not self.image.isNull():
-            
             # Redimensionne l'image en fonction du zoom et de la taille de la grille :
             scaled = self.image.scaled(
                 int(self.image.width() * self.zoom),
@@ -170,13 +170,14 @@ class ImageZoomable(QLabel):
                 Qt.AspectRatioMode.KeepAspectRatio,
                 Qt.TransformationMode.SmoothTransformation
             )
-            
             self.setPixmap(scaled) # Définit le pixmap de l'étiquette avec l'image redimensionnée
             self.resize(scaled.size()) # Redimensionne en correspondant à la taille de l'image
             self.filtrer_cases_visibles()
+            self.repaint()  # Ajout : force la mise à jour graphique
         else:
             self.clear()
             self.resize(0, 0)
+            self.repaint()  # Ajout : force la mise à jour graphique
 
     def paintEvent(self, event):
         # Redessine l'image et la grille sur le QLabel automatiquement par Qt

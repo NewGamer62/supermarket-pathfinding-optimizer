@@ -139,6 +139,29 @@ class Informations(QWidget):
 
         self.ligneNomProjet.setText(nom)
 
+    def getInfos(self) -> dict:
+        """Retourne un dictionnaire avec les informations saisies dans la vue."""
+        return {
+            "nom": self.ligneNomProjet.text(),
+            "auteur": self.ligneNomAuteur.text(),
+            "date création": self.ligneDate.text(),
+            "nom supermarché": self.ligneNomMagasin.text(),
+            "adresse supermarché": self.ligneAdresse.text()
+        }
+
+    def setInfos(self, infos: dict) -> None:
+        """Met à jour les champs de la vue avec les informations fournies."""
+        self.ligneNomProjet.setText(infos.get("nom", ""))
+        self.ligneNomAuteur.setText(infos.get("auteur", ""))
+        date_val = infos.get("date création", "")
+        # Conversion de la date si besoin
+        if hasattr(date_val, "strftime"):
+            date_str = date_val.strftime("%d/%m/%Y")
+        else:
+            date_str = str(date_val)
+        self.ligneDate.setText(date_str)
+        self.ligneNomMagasin.setText(infos.get("nom supermarché", ""))
+        self.ligneAdresse.setText(infos.get("adresse supermarché", ""))
 
 # ---------------------------------------------------------------------------
 # --- Main

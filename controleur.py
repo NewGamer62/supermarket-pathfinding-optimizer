@@ -7,6 +7,7 @@
 #         MINNEBO Valentin (TPA)
 
 import modele, vue
+from datetime import datetime
 
 #=====================================
 #== Classe Controleur :
@@ -38,14 +39,36 @@ class Controleur:
         Modifier
         '''
         self.modele = modele.Projet(chemin)
+        # Synchroniser la matrice du plan
         self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
-        self.synchroniser_vue_modele()
+        # Synchroniser les infos à droite
+        if hasattr(self.vue.informations, "setInfos"):
+            self.vue.informations.setInfos(self.modele.informations.getInfos())
+        # Charger l'image du dossier si elle existe
+        self.charger_image_depuis_dossier(chemin)
 
     def synchroniser_vue_modele(self):
         # Synchronise les infos et la liste des produits du modèle vers la vue
         infos = self.modele.informations.getInfos()
-        #à mettre dans la vue (plan->image chemin et infos) !!!
-        
+        if hasattr(self.vue.informations, "setInfos"):
+            self.vue.informations.setInfos(infos)
+        # Synchronise la matrice du plan
+        if hasattr(self.vue.plan.image_widget, "matrice_a_appliquer"):
+            self.vue.plan.image_widget.matrice_a_appliquer(self.modele.supermarche.getQuadrillage())
+        # Synchronise l'image si besoin (optionnel, à appeler si nécessaire)
+
+    def charger_image_depuis_dossier(self, dossier):
+        """Cherche une image dans le dossier supermarche et la charge dans la vue si trouvée."""
+        import os
+        dossier_supermarche = os.path.join(dossier, "supermarche")
+        if not os.path.exists(dossier_supermarche):
+            return
+        for nom in ["plan.png", "plan.jpg", "plan.jpeg"]:
+            chemin_image = os.path.join(dossier_supermarche, nom)
+            if os.path.exists(chemin_image):
+                if hasattr(self.vue.plan, "set_image"):
+                    self.vue.plan.set_image(chemin_image)
+                break
 
     def enregistrerFichier(self, chemin: str) -> None:
         '''
@@ -54,10 +77,19 @@ class Controleur:
         # Synchronise les infos et produits de la vue vers le modèle avant sauvegarde
         if hasattr(self.vue.informations, "getInfos"):
             infos = self.vue.informations.getInfos()
+            # Conversion de la date si besoin
+            date_creation = infos['date création']
+            if isinstance(date_creation, str):
+                try:
+                    # Essaye de parser la date au format français
+                    date_creation = datetime.strptime(date_creation, "%d/%m/%Y").date()
+                except Exception:
+                    # Sinon, laisse la chaîne telle quelle (le modèle lèvera une erreur si ce n'est pas une date)
+                    pass
             self.modele.informations.setInfos(
                 infos['nom'],
                 infos['auteur'],
-                infos['date création'],
+                date_creation,
                 infos['nom supermarché'],
                 infos['adresse supermarché'],
             )

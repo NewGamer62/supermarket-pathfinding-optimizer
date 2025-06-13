@@ -211,6 +211,13 @@ class Plan(QWidget):
         # Connecte un signal externe (qui émet une matrice) à l'entrée de l'image_widget
         signal_externe.connect(self.image_widget.matrice_a_appliquer)
 
+    def set_image(self, chemin):
+        """Charge une image et met à jour l'affichage (utilisé par le contrôleur)."""
+        self.chemin_image = chemin
+        self.image_widget.charger_image(chemin)
+        self.mettre_a_jour_affichage()
+        self.repaint()  # Ajout : force la mise à jour graphique
+
 # Programme principal : test de la vue ---------------------------------------
 if __name__ == "__main__":
     app = QApplication(sys.argv)
