@@ -39,7 +39,7 @@ class Vue(QWidget):
         self.bandeau.setFixedHeight(40)  # Hauteur réduite du bandeau
         self.elementsMagasin = vueElementsMagasin.ElementsMagasin()
         self.informations = vueInformations.Informations()
-        self.listeProduitCase = vueListeProduitCase.ContenuCase()
+        self.listeProduitCase = vueListeProduitCase.ListeProduitCase()
         self.listeProduits = vueListeProduits.ListeProduits()
         self.plan = vuePlan.Plan()
 
