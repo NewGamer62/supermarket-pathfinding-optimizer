@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/GUI-PyQt6%20%2F%20Custom%20QSS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="PyQt6" />
   <img src="https://img.shields.io/badge/Architecture-MVC%20Strict-orange?style=for-the-badge" alt="MVC" />
   <img src="https://img.shields.io/badge/Th%C3%A9orie-Algorithmes%20de%20Graphes-purple?style=for-the-badge" alt="Graphes" />
-  <img src="https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge" alt="Licence" />
+  <img src="https://img.shields.io/badge/SAÉ-BUT%20Informatique-blueviolet?style=for-the-badge" alt="SAÉ BUT Informatique" />
 </p>
 
 ---
