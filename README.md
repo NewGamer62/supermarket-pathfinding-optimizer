@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/GUI-PyQt5%20%2F%20Custom%20QSS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="PyQt5" />
+  <img src="https://img.shields.io/badge/GUI-PyQt6%20%2F%20Custom%20QSS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="PyQt6" />
   <img src="https://img.shields.io/badge/Architecture-MVC%20Strict-orange?style=for-the-badge" alt="MVC" />
   <img src="https://img.shields.io/badge/Th%C3%A9orie-Algorithmes%20de%20Graphes-purple?style=for-the-badge" alt="Graphes" />
   <img src="https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge" alt="Licence" />
@@ -29,7 +29,7 @@ Le projet repose sur deux applications découplées articulées autour d'une arc
 - **Résolution Algorithmique de Chemins Optimaux** :
   - Modélisation du supermarché en graphe non-orienté pondéré (nœuds = intersections/rayons, arêtes = allées praticables).
   - Calcul de plus court chemin entre points d'intérêt multiples et ordonnancement de collecte.
-- **Interface Utilisateur Réactive (PyQt5)** :
+- **Interface Utilisateur Réactive (PyQt6)** :
   - Thèmes sombre et clair personnalisés via des feuilles de style QSS modulaires.
   - Vues découplées : bandeau d'outils, panneau d'informations contextuelles, liste d'inventaire interactive et canevas vectoriel.
 
@@ -48,14 +48,16 @@ supermarket-pathfinding-optimizer/
 │   ├── vue.py                 # Fenêtre principale et assemblage des composants UI
 │   ├── vueBandeau.py          # Barre d'outils d'édition
 │   ├── vueInformations.py     # Panneau d'informations et détails cellule
-│   └── vueListeProduit.py     # Explorateur et gestion des références produits
+│   └── vueListeProduits.py    # Explorateur et gestion des références produits
 ├── deuxiemeApp/               # Application 2 : Moteur de navigation & optimisation
 │   ├── mainApp2.py            # Point d'entrée App 2
 │   ├── controApp2.py          # Contrôleur dédié au routage et à la recherche
 │   ├── vueApp2.py             # Interface de sélection de liste et tracé du parcours
-│   └── vueListeCourse.py      # Module de saisie et d'ordonnancement de liste
+│   └── filepile.py            # Structures algorithmiques et parcours de graphes
 ├── Sauvegarde-Test/           # Plans d'exemple sérialisés pour démonstration
 ├── annexes/                   # Ressources graphiques, maquettes et charte
+├── requirements.txt           # Dépendances Python (PyQt6, numpy)
+├── run.py                     # Lanceur universel CLI
 └── README.md
 ```
 
@@ -65,30 +67,40 @@ supermarket-pathfinding-optimizer/
 
 Au sein de l'équipe de développement :
 - **Design UI/UX & Prototypage** : Co-conception des maquettes complètes sous Figma pour structurer l'expérience utilisateur et l'ergonomie des deux applications.
-- **Développement Front-End PyQt5 (App 1)** : Conception et implémentation des composants `vueInformations.py` et `vueListeProduit.py`, intégrant le scroll dynamique et la mise à jour temps réel des états de sélection.
+- **Développement Front-End PyQt6 (App 1)** : Conception et implémentation des composants `vueInformations.py` et `vueListeProduits.py`, intégrant le scroll dynamique et la mise à jour temps réel des états de sélection.
 - **Architecture & Développement de l'Application 2** : Conception intégrale de l'interface `vueApp2.py` et développement du contrôleur `controApp2.py` faisant la passerelle entre le modèle de données spatiales et le calcul de parcours.
-- **Refactoring & Qualité de Code** : Harmonisation des standards de nommage (camelCase), documentation interne (docstrings) et résolution des conflits d'intégration entre branches de vues et contrôleur.
+- **Refactoring & Qualité de Code** : Harmonisation des standards de nommage, documentation interne (docstrings) et résolution des conflits d'intégration entre branches de vues et contrôleur.
 
 ---
 
 ## 🚀 Démarrage Rapide
 
-### Prérequis
-- Python 3.10 ou supérieur
-- PyQt5 installé (`pip install PyQt5`)
-
-### Lancement de l'Éditeur Spatial (App 1)
+### 1. Installation des dépendances
 
 ```bash
-cd premiereApp
-python main.py
+pip install -r requirements.txt
 ```
-*Astuce : Vous pouvez ouvrir directement un plan d'exemple situé dans le répertoire `Sauvegarde-Test/` depuis le menu fichier.*
 
-### Lancement du Calculateur de Parcours (App 2)
+### 2. Lancement des applications
 
+#### Option A : Via le lanceur universel (Recommandé)
 ```bash
-cd deuxiemeApp
-python mainApp2.py
+python run.py 1   # Lance l'Éditeur Spatial (App 1)
+python run.py 2   # Lance le Calculateur de Parcours (App 2)
 ```
-Chargez le plan configuré, ajoutez vos articles à la liste de courses et lancez le calcul automatique du chemin optimal.
+
+Ou sous PowerShell :
+```powershell
+.\run_app1.ps1    # App 1
+.\run_app2.ps1    # App 2
+```
+
+#### Option B : Lancement direct par dossier
+```bash
+# Éditeur Spatial (App 1)
+cd premiereApp && python main.py
+
+# Calculateur de Parcours (App 2)
+cd deuxiemeApp && python mainApp2.py
+```
+*Astuce : Vous pouvez ouvrir directement un plan d'exemple situé dans le répertoire `Sauvegarde-Test/` depuis le menu Fichier.*
