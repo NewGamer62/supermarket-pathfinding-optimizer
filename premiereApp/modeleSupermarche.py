@@ -155,7 +155,7 @@ Paramètres :
         assert(isinstance(nomJSON, str)), "Le chemin du fichier à écrire doit être une chaine de caractères"
         assert(nomJSON[len(nomJSON) - 5:] == ".json"), "Le fichier à écrire n'est pas un fichier JSON"
         
-        with open(nomJSON, 'w') as fichier : json.dump({'liste produits' : self.getListeProduits()}, fichier, ensure_ascii = False)
+        with open(nomJSON, 'w', encoding = 'utf-8') as fichier : json.dump({'liste produits' : self.getListeProduits()}, fichier, ensure_ascii = False)
         
         
         
@@ -236,7 +236,7 @@ Paramètres :
         assert(isinstance(nomJSON, str)), "Le chemin du fichier à écrire doit être une chaine de caractères"
         assert(nomJSON[len(nomJSON) - 5:] == ".json"), "Le fichier à écrire n'est pas un fichier JSON"
         
-        with open(nomJSON, 'w') as fichier : json.dump({'quadrillage' : self.getQuadrillage()}, fichier, ensure_ascii = False)
+        with open(nomJSON, 'w', encoding = 'utf-8') as fichier : json.dump({'quadrillage' : self.getQuadrillage()}, fichier, ensure_ascii = False)
     
     
     

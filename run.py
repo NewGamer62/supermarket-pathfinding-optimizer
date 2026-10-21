@@ -11,6 +11,23 @@ import sys
 import subprocess
 from pathlib import Path
 
+def check_dependencies():
+    missing = []
+    try:
+        import PyQt6
+    except ImportError:
+        missing.append("PyQt6")
+    try:
+        import numpy
+    except ImportError:
+        missing.append("numpy")
+    
+    if missing:
+        print(f"\n[!] Dependance(s) manquante(s) : {', '.join(missing)}")
+        print("    Veuillez installer les prerequis avec : pip install -r requirements.txt\n")
+        return False
+    return True
+
 def main():
     root = Path(__file__).parent.resolve()
     
@@ -22,6 +39,9 @@ def main():
         print("2. Lancer le Calculateur de Parcours (deuxiemeApp)")
         print("Q. Quitter")
         choice = input("\nChoisissez une option (1/2/Q) : ").strip()
+
+    if choice in ("1", "2") and not check_dependencies():
+        sys.exit(1)
 
     if choice == "1":
         target = root / "premiereApp" / "main.py"

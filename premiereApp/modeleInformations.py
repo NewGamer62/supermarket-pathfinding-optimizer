@@ -95,7 +95,7 @@ Paramètres :
         # --- Script --- #
         
         # Écriture fichier 
-        with open(nomJSON, 'w') as fichier : json.dump(infos, fichier, ensure_ascii = False)
+        with open(nomJSON, 'w', encoding = 'utf-8') as fichier : json.dump(infos, fichier, ensure_ascii = False)
                
     # --- Getters --- #
     
